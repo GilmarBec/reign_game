@@ -13,7 +13,7 @@ class PageTable(AbstractPage):
         return 'TABLE'
 
     def build(self, data: any = None):
-        self.build_frame()
+        self._build_frame()
 
         # n_players = data['n_players']
         # difficulty = data['difficulty']
@@ -64,7 +64,7 @@ class PageTable(AbstractPage):
         canvas.tag_bind('reign', "<Button-1>", self.__attack)
 
     def __attack(self, event: Event):
-        self.select_page('BOARD')
+        self._select_page('BOARD')
 
     def __pass_round(self):
         print('Passar a Vez')

@@ -20,7 +20,7 @@ class PageBoard(AbstractPage):
         return 'BOARD'
 
     def build(self, data: any = None):
-        self.build_frame()
+        self._build_frame()
         self.__draw_attacker_side()
         self.__draw_defensor_side()
 
@@ -202,7 +202,7 @@ class PageBoard(AbstractPage):
         self.__phase_frame.grid(row=0, column=1, padx=10, rowspan=2)
 
     def __go_to_table(self):
-        self.select_page('TABLE')
+        self._select_page('TABLE')
         self._reset_board()
 
     def _reset_board(self):

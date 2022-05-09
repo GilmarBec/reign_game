@@ -15,7 +15,7 @@ class PageMenu(AbstractPage):
         return 'MENU'
 
     def build(self, data: any = None):
-        self.build_frame()
+        self._build_frame()
 
         Label(self._frame, text='Jogo dos Reinos', font=("Arial", 100)).grid(
             row=1, column=1, padx=10, pady=50, columnspan=2
@@ -45,7 +45,7 @@ class PageMenu(AbstractPage):
         return combobox
 
     def start_game(self):
-        self.select_page('TABLE', {
+        self._select_page('TABLE', {
             'n_players': self.combobox['n_players'].get(),
             'difficulty': self.combobox['difficulty'].get(),
         })

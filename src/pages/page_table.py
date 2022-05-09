@@ -13,13 +13,13 @@ class PageTable(AbstractPage):
         return 'TABLE'
 
     def build(self, data: any = None):
-        self.build_frame()
+        self._build_frame()
 
         # n_players = data['n_players']
         # difficulty = data['difficulty']
 
-        self.build_frame_players_list()
-        self.build_frame_table()
+        self.__build_frame_players_list()
+        self.__build_frame_table()
 
         Button(self._frame, text='🔙', command=self._go_to_menu, font=("Arial", 25))\
             .grid(row=0, column=5, padx=10, pady=10, ipady=0)
@@ -29,7 +29,7 @@ class PageTable(AbstractPage):
 
         self._frame.pack()
 
-    def build_frame_players_list(self):
+    def __build_frame_players_list(self):
         frame = Frame(self._frame, pady=10)
         frame.grid(row=1, column=0, padx=10, rowspan=2)
 
@@ -37,7 +37,7 @@ class PageTable(AbstractPage):
             Label(frame, text=SYMBOLS[i], font=("Arial", 20)).grid(row=i, column=0, padx=10, pady=20)
             Label(frame, text='Reino', font=("Arial", 20)).grid(row=i, column=1, padx=10, pady=20)
 
-    def build_frame_table(self):
+    def __build_frame_table(self):
         frame = Frame(self._frame, pady=50, padx=50)
         frame.grid(row=1, column=1, padx=10, rowspan=2, columnspan=4)
 
@@ -64,7 +64,7 @@ class PageTable(AbstractPage):
         canvas.tag_bind('reign', "<Button-1>", self.__attack)
 
     def __attack(self, event: Event):
-        self.select_page('BOARD')
+        self._select_page('BOARD')
 
     def __pass_round(self):
         print('Passar a Vez')

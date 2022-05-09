@@ -7,19 +7,19 @@ from src.pages.page_table import PageTable
 
 
 class Application:
-    window: Tk = Tk()
-    router: PageRouter
+    __window: Tk = Tk()
+    __router: PageRouter
 
     def __init__(self):
+        self.__window.title('Jogo do reino')
         # self.window.attributes("-fullscreen", True)
-        self.window.title('Jogo do reino')
         # self.window.attributes('-topmost', True)
         # self.window.state('zoomed')
 
-        self.router = PageRouter({
-            'BOARD': PageBoard(self.window),
-            'MENU': PageMenu(self.window),
-            'TABLE': PageTable(self.window),
+        self.__router = PageRouter({
+            'BOARD': PageBoard(self.__window),
+            'MENU': PageMenu(self.__window),
+            'TABLE': PageTable(self.__window),
         })
 
-        self.window.mainloop()
+        self.__window.mainloop()

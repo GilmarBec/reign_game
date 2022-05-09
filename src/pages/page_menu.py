@@ -5,7 +5,7 @@ from src.pages.abstract_page import AbstractPage
 
 
 class PageMenu(AbstractPage):
-    combobox: dict = {}
+    __combobox: dict = {}
 
     def __init__(self, window):
         super().__init__(window)
@@ -21,22 +21,22 @@ class PageMenu(AbstractPage):
             row=1, column=1, padx=10, pady=50, columnspan=2
         )
 
-        self.combobox['n_players'] = self.build_combobox(
+        self.__combobox['n_players'] = self.__build_combobox(
             'Nº de Jogadores', [n_players for n_players in range(4, 9)],
             grid={'row': 2, 'column': 2, 'padx': 10, 'pady': 10}
         )
-        self.combobox['difficulty'] = self.build_combobox(
+        self.__combobox['difficulty'] = self.__build_combobox(
             'Dificuldade', ['fácil', 'médio', 'difícil'],
             grid={'row': 3, 'column': 2, 'padx': 10, 'pady': 10}
         )
 
-        Button(self._frame, text='Start', font=("Arial", 20), command=self.start_game).grid(
+        Button(self._frame, text='Start', font=("Arial", 20), command=self.__start_game).grid(
             row=4, column=1, padx=10, pady=10, columnspan=2
         )
 
         self._frame.pack(padx=50, pady=50)
 
-    def build_combobox(self, title: str, values: list, grid):
+    def __build_combobox(self, title: str, values: list, grid):
         combobox = Combobox(self._frame, values=values, state='readonly', font=("Arial", 20))
         combobox.grid(grid)
         grid["column"] = grid["column"] - 1
@@ -44,8 +44,8 @@ class PageMenu(AbstractPage):
 
         return combobox
 
-    def start_game(self):
+    def __start_game(self):
         self._select_page('TABLE', {
-            'n_players': self.combobox['n_players'].get(),
-            'difficulty': self.combobox['difficulty'].get(),
+            'n_players': self.__combobox['n_players'].get(),
+            'difficulty': self.__combobox['difficulty'].get(),
         })

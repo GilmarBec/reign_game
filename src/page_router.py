@@ -2,36 +2,36 @@ from src.pages.abstract_page import AbstractPage
 
 
 class PageRouter:
-    pages: dict
-    current_page: AbstractPage
+    __pages: dict
+    __current_page: AbstractPage
 
     def __init__(self, pages: dict):
-        self.pages = pages
+        self.__pages = pages
 
         for page in pages.values():
             page.page_router = self
 
-        self.initial_page()
-
-    def initial_page(self):
-        self.current_page = self.pages['MENU']
-        self.current_page.build()
+        self.__initial_page()
 
     def select(self, key: str, data):
-        if self.current_page is None:
+        if self.__current_page is None:
             raise SystemError(f'Current page not defined', {
                 'key': key,
             })
 
-        if self.current_page.page_name == key:
+        if self.__current_page.page_name == key:
             raise SystemError(f'Already in page "{key}"', {
-                'current_page': self.current_page,
+                'current_page': self.__current_page,
                 'key': key,
             })
 
-        self.current_page.destroy()
+        self.__current_page.destroy()
 
         print(f'Going to Page {key}')
 
-        self.current_page = self.pages[key]
-        self.current_page.build(data)
+        self.__current_page = self.__pages[key]
+        self.__current_page.build(data)
+
+    def __initial_page(self):
+        self.__current_page = self.__pages['MENU']
+        self.__current_page.build()

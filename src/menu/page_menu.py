@@ -48,6 +48,6 @@ class PageMenu(AbstractPage):
 
     def __start_game(self):
         self._select_page('TABLE', Table(
-            n_players=self.__combobox['n_players'].get(),
+            n_players=int(self.__combobox['n_players'].get()),
             difficulty=self.__combobox['difficulty'].get(),
         ))

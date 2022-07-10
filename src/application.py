@@ -1,9 +1,9 @@
 from tkinter import Tk
 
 from src.page_router import PageRouter
-from src.pages.page_board import PageBoard
-from src.pages.page_menu import PageMenu
-from src.pages.page_table import PageTable
+from src.board.page_board import PageBoard
+from src.menu.page_menu import PageMenu
+from src.table.page_table import PageTable
 
 
 class Application:

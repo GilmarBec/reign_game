@@ -1,4 +1,4 @@
-from src.pages.abstract_page import AbstractPage
+from src.common.pages import AbstractPage
 
 
 class PageRouter:

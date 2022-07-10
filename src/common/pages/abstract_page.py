@@ -1,4 +1,5 @@
 from tkinter import Frame, Tk
+from tkinter.messagebox import showinfo
 from src.common.decorators import setter
 
 
@@ -44,4 +45,4 @@ class AbstractPage:
         pass
 
     def _notify_message(self, message) -> None:
-        pass
+        showinfo('Vitória', message)

@@ -1,4 +1,5 @@
 from tkinter import Button, Frame, Label, Canvas, Event
+from tkinter.font import BOLD, Font
 from src.common.pages import AbstractPage
 from src.table.table import Table
 
@@ -19,7 +20,7 @@ class PageTable(AbstractPage):
         if data:
             self.__table = data
 
-        self.__build_frame_players_list()
+        self.__build_frame_players_list(self.__table.current_reign.id)
         self.__build_frame_table()
 
         Button(self._frame, text='🔙', command=self._go_to_menu, font=("Arial", 25))\
@@ -30,13 +31,19 @@ class PageTable(AbstractPage):
 
         self._frame.pack()
 
-    def __build_frame_players_list(self) -> None:
+    def __build_frame_players_list(self, current_reign_id: int) -> None:
+        font_simple = Font(family="Arial", size=20)
+        font_bold = Font(family="Arial", size=20, weight=BOLD)
         frame = Frame(self._frame, pady=10)
         frame.grid(row=1, column=0, padx=10, rowspan=2)
 
         for reign in self.__table.reigns:
-            Label(frame, text=reign.symbol, font=("Arial", 20)).grid(row=reign.id, column=0, padx=10, pady=20)
-            Label(frame, text='Reino', font=("Arial", 20)).grid(row=reign.id, column=1, padx=10, pady=20)
+            font = font_simple
+            if reign.id == current_reign_id:
+                font = font_bold
+
+            Label(frame, text=reign.symbol, font=font, fg=reign.color).grid(row=reign.id, column=0, padx=10, pady=20)
+            Label(frame, text='Reino', font=font, fg=reign.color).grid(row=reign.id, column=1, padx=10, pady=20)
 
     def __build_frame_table(self) -> None:
         frame = Frame(self._frame, pady=50, padx=50)
@@ -74,16 +81,17 @@ class PageTable(AbstractPage):
         self._select_page('BOARD')
 
     def __end_turn(self) -> None:
-        print('Passar a Vez')
+        self.__table.end_turn()
+        self.__select_player()
 
     def __select_player(self) -> None:
-        reign = self.__table.get_current_reign()
+        reign = self.__table.current_reign
 
         self._notify_message(f"Turno do reino {reign.id}")
         self.__indicate_reign(reign.id)
 
     def __indicate_reign(self, reign_id: int) -> None:
-        pass
+        self.__build_frame_players_list(reign_id)
 
     def end_game(self) -> None:
         pass

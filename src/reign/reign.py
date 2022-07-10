@@ -46,7 +46,7 @@ class Reign:
 
     @property
     def overlord(self) -> any:
-        return self.__id
+        return self.__overlord
 
     @property
     def symbol(self) -> str:

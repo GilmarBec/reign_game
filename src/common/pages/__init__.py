@@ -1,1 +1,1 @@
-from abstract_page import AbstractPage
+from .abstract_page import AbstractPage

@@ -1,1 +1,1 @@
-from setter_property import setter
+from .setter_property import setter

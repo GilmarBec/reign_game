@@ -1,4 +1,4 @@
-from src.common.constants import SYMBOLS, COLORS
+from .reign_constants import SYMBOLS, COLORS
 
 
 class Reign:

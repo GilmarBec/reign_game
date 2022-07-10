@@ -1,1 +1,1 @@
-from reign import Reign
+from .reign import Reign

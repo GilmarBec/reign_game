@@ -2,7 +2,7 @@ from random import randint
 from tkinter import Button, Canvas, Frame, Label
 from tkinter.messagebox import showinfo
 
-from board_constants import STATES, CARDS
+from .board_constants import STATES, CARDS
 from src.reign.reign_constants import COLORS
 from src.common.pages import AbstractPage
 

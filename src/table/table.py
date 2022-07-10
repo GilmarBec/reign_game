@@ -9,6 +9,10 @@ class Table:
         self.__reigns = [Reign(i) for i in range(n_players)]
         self.__difficulty = difficulty
 
+    @property
+    def reigns(self) -> [Reign]:
+        return [self.get_reign(i) for i in range(len(self.__reigns))]
+
     def attack(self) -> None:
         pass
 
@@ -22,7 +26,11 @@ class Table:
         pass
 
     def get_reign(self, reign_id: int) -> Reign:
-        pass
+        for reign in self.__reigns:
+            if reign.id == reign_id:
+                return reign
+
+        raise AssertionError(f'Reign with ID[{reign_id}] not exists')
 
     def verify_end_game(self) -> bool:
         pass

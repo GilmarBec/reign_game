@@ -1,6 +1,4 @@
 from tkinter import Button, Frame, Label, Canvas, Event
-
-from src.reign.reign_constants import SYMBOLS, COLORS
 from src.common.pages import AbstractPage
 from src.table.table import Table
 
@@ -15,9 +13,11 @@ class PageTable(AbstractPage):
     def page_name(self) -> str:
         return 'TABLE'
 
-    def build(self, data: any = None) -> None:
+    def build(self, data: Table or None = None) -> None:
         self._build_frame()
-        self.__table = data
+
+        if data:
+            self.__table = data
 
         self.__build_frame_players_list()
         self.__build_frame_table()
@@ -34,9 +34,9 @@ class PageTable(AbstractPage):
         frame = Frame(self._frame, pady=10)
         frame.grid(row=1, column=0, padx=10, rowspan=2)
 
-        for i in range(8):
-            Label(frame, text=SYMBOLS[i], font=("Arial", 20)).grid(row=i, column=0, padx=10, pady=20)
-            Label(frame, text='Reino', font=("Arial", 20)).grid(row=i, column=1, padx=10, pady=20)
+        for reign in self.__table.reigns:
+            Label(frame, text=reign.symbol, font=("Arial", 20)).grid(row=reign.id, column=0, padx=10, pady=20)
+            Label(frame, text='Reino', font=("Arial", 20)).grid(row=reign.id, column=1, padx=10, pady=20)
 
     def __build_frame_table(self) -> None:
         frame = Frame(self._frame, pady=50, padx=50)
@@ -51,14 +51,20 @@ class PageTable(AbstractPage):
         reign_width: int = 250
         reign_height: int = 250
 
+        reigns_to_create = self.__table.reigns
+
         for row in range(2):
             for column in range(4):
+                if not len(reigns_to_create):
+                    break
+
+                reign = reigns_to_create.pop(0)
                 pad_left = 50 + column * reign_width
                 pad_up = 50 + row * reign_height
                 canvas.create_rectangle(
                     pad_left, pad_up,
                     reign_width + pad_left, reign_height + pad_up,
-                    fill=COLORS[column+(row * 4)],
+                    fill=reign.color,
                     tags="reign"
                 )
 

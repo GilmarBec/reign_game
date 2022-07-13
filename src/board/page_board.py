@@ -2,6 +2,7 @@ from random import randint
 from tkinter import Button, Canvas, Frame, Label
 from tkinter.messagebox import showinfo
 
+from .board import Board
 from .board_constants import STATES, CARDS
 from src.reign.reign_constants import COLORS
 from src.common.pages import AbstractPage
@@ -9,7 +10,8 @@ from src.common.pages import AbstractPage
 
 class PageBoard(AbstractPage):
     __state: str
-    __phase_frame: Frame
+    __action_frame: Frame
+    __board: Board
 
     def __init__(self, window):
         super().__init__(window)
@@ -20,12 +22,15 @@ class PageBoard(AbstractPage):
         return 'BOARD'
 
     def build(self, data: any = None) -> None:
+        if data is not None:
+            self.__board = data
+
         self._build_frame()
         self.__draw_attacker_side()
         self.__draw_defensor_side()
 
-        self.__phase_frame = Frame(self._frame, pady=10, padx=10)
-        self.__phase_frame.grid(row=0, column=1, padx=10, rowspan=2)
+        self.__action_frame = Frame(self._frame, pady=10, padx=10)
+        self.__action_frame.grid(row=0, column=1, padx=10, rowspan=2)
 
         self.__build_army_faith()
 
@@ -116,19 +121,19 @@ class PageBoard(AbstractPage):
         self.__build_dice_test('Teste de Conquista de Exército Inimigo')
 
     def __build_dice_test(self, title: str) -> None:
-        Label(self.__phase_frame, text=title, font=("Arial", 20)).pack()
+        Label(self.__action_frame, text=title, font=("Arial", 20)).pack()
 
-        dice = Label(self.__phase_frame, text='🎲', font=("Arial", 200))
+        dice = Label(self.__action_frame, text='🎲', font=("Arial", 200))
         dice.bind('<Button-1>', self.__roll_dice)
         dice.pack()
 
-        Label(self.__phase_frame, text='Precisa tirar maior que 10 para Vitória.', font=("Arial", 20)).pack()
+        Label(self.__action_frame, text='Precisa tirar maior que 10 para Vitória.', font=("Arial", 20)).pack()
 
     def __build_revolt_option(self) -> None:
-        Label(self.__phase_frame, text='Chance de Rebelião', font=("Arial", 20)).pack()
+        Label(self.__action_frame, text='Chance de Rebelião', font=("Arial", 20)).pack()
 
-        sword = Label(self.__phase_frame, text='⚔  45% de sucesso', cursor='hand2', font=("Arial", 30))
-        sleep = Label(self.__phase_frame, text='⏳ +15% de sucesso', cursor='exchange', font=("Arial", 30))
+        sword = Label(self.__action_frame, text='⚔  45% de sucesso', cursor='hand2', font=("Arial", 30))
+        sleep = Label(self.__action_frame, text='⏳ +15% de sucesso', cursor='exchange', font=("Arial", 30))
 
         sword.bind('<Button-1>', self.__try_revolt)
         sleep.bind('<Button-1>', self.__try_sleep)
@@ -136,7 +141,7 @@ class PageBoard(AbstractPage):
         sword.pack()
         sleep.pack()
 
-        Label(self.__phase_frame, text='Precisa tirar maior que 9 para Vitória.', font=("Arial", 20)).pack()
+        Label(self.__action_frame, text='Precisa tirar maior que 9 para Vitória.', font=("Arial", 20)).pack()
 
     def __build_card_game(self) -> None:
         joker_position = (0, 0)
@@ -145,7 +150,7 @@ class PageBoard(AbstractPage):
             for j in range(5):
                 is_joker = i == joker_position[0] and j == joker_position[1]
 
-                label = Label(self.__phase_frame, text='🂠', font=("Arial", 80))
+                label = Label(self.__action_frame, text='🂠', font=("Arial", 80))
                 label.grid(row=i, column=j)
 
                 if is_joker:
@@ -160,11 +165,11 @@ class PageBoard(AbstractPage):
     def __turn_card(self, row, column) -> None:
         card = CARDS[randint(0, len(CARDS) - 1)]
 
-        label = Label(self.__phase_frame, text=card, font=("Arial", 80))
+        label = Label(self.__action_frame, text=card, font=("Arial", 80))
         label.grid(row=row, column=column)
 
     def __turn_joker(self, row, column) -> None:
-        label = Label(self.__phase_frame, text='🃏', font=("Arial", 60))
+        label = Label(self.__action_frame, text='🃏', font=("Arial", 60))
         label.grid(row=row, column=column)
         showinfo('Vitória', 'Ataque bem sucedido!')
         self.__go_to_table()
@@ -173,7 +178,6 @@ class PageBoard(AbstractPage):
         self.__reset_phase_frame()
 
         if self.__state == STATES.REVOLT:
-            self.__state = STATES.BATTLE
             self.__build_card_game()
             showinfo('Resultado 🎲 = 8', 'O teste resultou em 🎲8.\nVocê falhou em se rebelar.\nAgora seu suserano está de olho em você.\n\n-15% de chance de Rebelião!')
 
@@ -181,7 +185,6 @@ class PageBoard(AbstractPage):
         self.__reset_phase_frame()
 
         if self.__state == STATES.ARMY_FAITH:
-            self.__state = STATES.BATTLE
             self.__build_card_game()
             showinfo('Decidiu esperar', 'Você decidiu esperar, ganhando confiança do seu suserano.\nAumentou as chances de revolta com sucesso em +15%.')
 
@@ -189,18 +192,16 @@ class PageBoard(AbstractPage):
         self.__reset_phase_frame()
 
         if self.__state == STATES.ARMY_FAITH:
-            self.__state = STATES.ARMY_BETRAYAL
             self.__build_army_betrayal()
             showinfo('Resultado 🎲 = 4', 'O teste resultou em 🎲4.\nSeu exército não acredita que você fez a escolha certa ao declarar este ataque!')
         elif self.__state == STATES.ARMY_BETRAYAL:
-            self.__state = STATES.REVOLT
             self.__build_revolt_option()
             showinfo('Resultado 🎲 = 3', 'O teste resultou em 🎲3.\nVocê não conseguiu convencer o exército neutro a se juntar a você nessa batalha!')
 
     def __reset_phase_frame(self) -> None:
-        self.__phase_frame.destroy()
-        self.__phase_frame = Frame(self._frame, pady=10, padx=10)
-        self.__phase_frame.grid(row=0, column=1, padx=10, rowspan=2)
+        self.__action_frame.destroy()
+        self.__action_frame = Frame(self._frame, pady=10, padx=10)
+        self.__action_frame.grid(row=0, column=1, padx=10, rowspan=2)
 
     def __go_to_table(self) -> None:
         self._select_page('TABLE')

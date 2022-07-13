@@ -45,4 +45,4 @@ class AbstractPage:
         pass
 
     def _notify_message(self, message) -> None:
-        showinfo('Vitória', message)
+        showinfo('Mensagem', message)

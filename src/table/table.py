@@ -1,3 +1,4 @@
+from src.board.board import Board
 from src.common.utils.array import rotate
 from src.reign.reign import Reign
 
@@ -16,8 +17,12 @@ class Table:
     def reigns(self) -> [Reign]:
         return [self.get_reign(i) for i in range(len(self.__reigns))]
 
-    def attack(self) -> None:
-        pass
+    def attack(self, defender_reign_id: int) -> Board:
+        return Board(
+            difficulty=self.__difficulty,
+            attacker=self.__current_reign,
+            defender=self.get_reign(defender_reign_id)
+        )
 
     def change_current_player(self) -> None:
         pass

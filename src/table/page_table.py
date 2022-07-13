@@ -78,7 +78,8 @@ class PageTable(AbstractPage):
         canvas.tag_bind('reign', "<Button-1>", self.__attack)
 
     def __attack(self, event: Event) -> None:
-        self._select_page('BOARD')
+        board = self.__table.attack(2)
+        self._select_page('BOARD', board)
 
     def __end_turn(self) -> None:
         self.__table.end_turn()

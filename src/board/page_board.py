@@ -9,7 +9,7 @@ from src.common.pages import AbstractPage
 
 
 class PageBoard(AbstractPage):
-    __state: str
+    __state: int
     __action_frame: Frame
     __board: Board
 
@@ -175,33 +175,64 @@ class PageBoard(AbstractPage):
         self.__go_to_table()
 
     def __try_revolt(self, event) -> None:
-        self.__reset_phase_frame()
+        self.__update_phase_frame()
 
         if self.__state == STATES.REVOLT:
             self.__build_card_game()
-            showinfo('Resultado 🎲 = 8', 'O teste resultou em 🎲8.\nVocê falhou em se rebelar.\nAgora seu suserano está de olho em você.\n\n-15% de chance de Rebelião!')
+            showinfo(
+                'Resultado 🎲 = 8',
+                'O teste resultou em 🎲8.\nVocê falhou em se rebelar.\nAgora seu suserano está de olho em você.'
+                '\n\n-15% de chance de Rebelião!'
+            )
 
     def __try_sleep(self, event) -> None:
-        self.__reset_phase_frame()
+        self.__update_phase_frame()
 
         if self.__state == STATES.ARMY_FAITH:
             self.__build_card_game()
-            showinfo('Decidiu esperar', 'Você decidiu esperar, ganhando confiança do seu suserano.\nAumentou as chances de revolta com sucesso em +15%.')
+            showinfo(
+                'Decidiu esperar',
+                'Você decidiu esperar, ganhando confiança do seu suserano.\nAumentou as chances de revolta com sucesso em +15%.'
+            )
 
     def __roll_dice(self, event) -> None:
-        self.__reset_phase_frame()
+        self.__update_phase_frame()
+
+        self.__state = self.__board.state
 
         if self.__state == STATES.ARMY_FAITH:
-            self.__build_army_betrayal()
-            showinfo('Resultado 🎲 = 4', 'O teste resultou em 🎲4.\nSeu exército não acredita que você fez a escolha certa ao declarar este ataque!')
-        elif self.__state == STATES.ARMY_BETRAYAL:
-            self.__build_revolt_option()
-            showinfo('Resultado 🎲 = 3', 'O teste resultou em 🎲3.\nVocê não conseguiu convencer o exército neutro a se juntar a você nessa batalha!')
+            [win, die_result] = self.__board.army_faith()
 
-    def __reset_phase_frame(self) -> None:
+            message = 'Seu exército não acredita que você fez a escolha certa ao declarar este ataque!'
+            if win:
+                message = 'Seu exército estará com você nessa batalha!'
+
+            self._notify_message(f'Resultado 🎲 = {die_result}\n\n{message}')
+        elif self.__state == STATES.ARMY_BETRAYAL:
+            [win, die_result] = self.__board.army_faith()
+
+            message = 'Você não conseguiu convencer o exército neutro a se juntar a você nessa batalha!'
+            if win:
+                message = 'O exército neutro adentrou a sua causa temporariamente!'
+
+            self._notify_message(f'Resultado 🎲 = {die_result}\n\n{message}')
+
+        self.__state = self.__board.state
+        self.__update_phase_frame()
+
+    def __update_phase_frame(self) -> None:
         self.__action_frame.destroy()
         self.__action_frame = Frame(self._frame, pady=10, padx=10)
         self.__action_frame.grid(row=0, column=1, padx=10, rowspan=2)
+
+        if self.__state == STATES.ARMY_FAITH:
+            self.__build_army_faith()
+        elif self.__state == STATES.ARMY_BETRAYAL:
+            self.__build_army_betrayal()
+        elif self.__state == STATES.REVOLT:
+            self.__build_revolt_option()
+        elif self.__state == STATES.BATTLE:
+            self.__build_card_game()
 
     def __go_to_table(self) -> None:
         self._select_page('TABLE')

@@ -1,10 +1,8 @@
 from random import randint
 from tkinter import Button, Canvas, Frame, Label
 from tkinter.messagebox import showinfo
-
 from .board import Board
 from .board_constants import STATES, CARDS
-from src.reign.reign_constants import COLORS
 from src.common.pages import AbstractPage
 
 
@@ -27,7 +25,7 @@ class PageBoard(AbstractPage):
 
         self._build_frame()
         self.__draw_attacker_side()
-        self.__draw_defensor_side()
+        self.__draw_defender_side()
 
         self.__action_frame = Frame(self._frame, pady=10, padx=10)
         self.__action_frame.grid(row=0, column=1, padx=10, rowspan=2)
@@ -50,6 +48,9 @@ class PageBoard(AbstractPage):
         canvas.pack()
 
     def __draw_attacker(self, canvas) -> None:
+        attacker = self.__board.attacker
+        attacker_vassals = attacker.vassals
+
         reign_width: int = 200
         reign_height: int = 200
         pad_left = 25
@@ -58,35 +59,49 @@ class PageBoard(AbstractPage):
         canvas.create_rectangle(
             pad_left, pad_up,
             reign_width + pad_left, reign_height + pad_up,
-            fill=COLORS[0]
+            fill=attacker.color
         )
 
         pad_up += 25 + reign_height
-        reign_height = int(reign_height / 2) - 25
-        reign_width = int(reign_width / 2) - 25
-        canvas.create_rectangle(
-            pad_left, pad_up,
-            reign_width + pad_left, reign_height + pad_up,
-            fill=COLORS[1]
-        )
 
-        pad_left += reign_width + 50
-        canvas.create_rectangle(
-            pad_left, pad_up,
-            reign_width + pad_left, reign_height + pad_up,
-            fill=COLORS[2]
-        )
+        for i in range(len(attacker_vassals)):
+            line_end = False
+            reign_height = 75
+            reign_width = 75
 
-    def __draw_defensor_side(self) -> None:
+            if i % 2 != 0 and i != 0:
+                pad_left += (reign_width + 50)
+                line_end = True
+                canvas.create_rectangle(
+                    pad_left, pad_up,
+                    reign_width + pad_left, reign_height + pad_up,
+                    fill=attacker_vassals[i].color
+                )
+            else:
+                pad_left = 25
+                line_end = False
+                canvas.create_rectangle(
+                    pad_left, pad_up,
+                    reign_width + pad_left, reign_height + pad_up,
+                    fill=attacker_vassals[i].color
+                )
+
+            if line_end:
+                pad_up += 25 + reign_height
+
+    def __draw_defender_side(self) -> None:
         frame = Frame(self._frame, pady=10, padx=10)
         canvas = Canvas(frame, height=600, width=250)
 
-        self.__draw_defensor(canvas)
+        self.__draw_defender(canvas)
 
         canvas.pack()
         frame.grid(row=0, column=2, padx=10, rowspan=2)
 
-    def __draw_defensor(self, canvas) -> None:
+    def __draw_defender(self, canvas) -> None:
+        defender = self.__board.defender
+        defender_vassals = defender.vassals
+
         reign_width: int = 200
         reign_height: int = 200
         pad_left = 25
@@ -95,24 +110,35 @@ class PageBoard(AbstractPage):
         canvas.create_rectangle(
             pad_left, pad_up,
             reign_width + pad_left, reign_height + pad_up,
-            fill=COLORS[3]
+            fill=defender.color
         )
 
-        reign_height = int(reign_height / 2) - 25
-        reign_width = int(reign_width / 2) - 25
-        pad_up = pad_up - 25 - reign_height
-        canvas.create_rectangle(
-            pad_left, pad_up,
-            reign_width + pad_left, reign_height + pad_up,
-            fill=COLORS[4]
-        )
+        pad_up = pad_up - 100
 
-        pad_left += reign_width + 50
-        canvas.create_rectangle(
-            pad_left, pad_up,
-            reign_width + pad_left, reign_height + pad_up,
-            fill=COLORS[5]
-        )
+        for i in range(len(defender_vassals)):
+            line_end = False
+            reign_height = 75
+            reign_width = 75
+
+            if i % 2 != 0 and i != 0:
+                pad_left += (reign_width + 50)
+                line_end = True
+                canvas.create_rectangle(
+                    pad_left, pad_up,
+                    reign_width + pad_left, reign_height + pad_up,
+                    fill=defender_vassals[i].color
+                )
+            else:
+                pad_left = 25
+                line_end = False
+                canvas.create_rectangle(
+                    pad_left, pad_up,
+                    reign_width + pad_left, reign_height + pad_up,
+                    fill=defender_vassals[i].color
+                )
+
+            if line_end:
+                pad_up = pad_up - 25 - reign_height
 
     def __build_army_faith(self) -> None:
         self.__build_dice_test('Teste de Exército Nativo')

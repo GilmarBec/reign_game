@@ -10,12 +10,13 @@ class Reign:
     __overlord: any = None  # Auto reference
     __revolt_chance: int = 0  # Min: 0, Max: 15
     __symbol: str
-    __vassals: [any] = []
+    __vassals: [any]
 
     def __init__(self, identifier: int):
         self.__id = identifier
         self.__color = COLORS[identifier]
         self.__symbol = SYMBOLS[identifier]
+        self.__vassals = []
 
     def reset_army(self) -> None:
         self.__army = self.__DEFAULT_ARMY

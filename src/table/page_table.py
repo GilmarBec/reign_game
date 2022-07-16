@@ -24,9 +24,6 @@ class PageTable(AbstractPage):
         self.__build_frame_players_list(self.__table.current_reign.id)
         self.__build_frame_table(self.__table.current_reign.id)
 
-        self.__table.reigns[0].vassals.append(self.__table.reigns[1])
-        self.__table.reigns[1].overlord = self.__table.reigns[0]
-
         Button(self._frame, text='🔙', command=self._go_to_menu, font=("Arial", 25))\
             .grid(row=0, column=5, padx=10, pady=10, ipady=0)
 

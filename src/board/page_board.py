@@ -157,16 +157,22 @@ class PageBoard(AbstractPage):
     def __build_revolt_option(self) -> None:
         Label(self.__action_frame, text='Chance de Rebelião', font=("Arial", 20)).pack()
 
-        sword = Label(self.__action_frame, text='⚔  45% de sucesso', cursor='hand2', font=("Arial", 30))
-        sleep = Label(self.__action_frame, text='⏳ +15% de sucesso', cursor='exchange', font=("Arial", 30))
+        revolt_chance = self.__board.current_action_selector.revolt_chance
+
+        omit_message = f'⏳ +3 de chance de rebelião'
+        if revolt_chance >= 15:
+            omit_message = f'⏳ -{revolt_chance - 9} chance de rebelião'
+
+        sword = Label(self.__action_frame, text=f'⚔  {revolt_chance} de sucesso', cursor='hand2', font=("Arial", 30))
+        omit = Label(self.__action_frame, text=omit_message, cursor='exchange', font=("Arial", 30))
 
         sword.bind('<Button-1>', self.__revolt)
-        sleep.bind('<Button-1>', self.__omit)
+        omit.bind('<Button-1>', self.__omit)
 
         sword.pack()
-        sleep.pack()
+        omit.pack()
 
-        Label(self.__action_frame, text='Precisa tirar maior que 9 para Vitória.', font=("Arial", 20)).pack()
+        Label(self.__action_frame, text=f'Precisa tirar {revolt_chance} ou + para Vitória.', font=("Arial", 20)).pack()
 
     def __build_card_game(self) -> None:
         joker_position = (0, 0)
@@ -200,15 +206,19 @@ class PageBoard(AbstractPage):
         self.__go_to_table()
 
     def __revolt(self, event) -> None:
-        self.__update_phase_frame()
+        [win, revolt_chance] = self.__board.revolt()
 
-        if self.__state == STATES.REVOLT:
-            self.__build_card_game()
-            showinfo(
-                'Resultado 🎲 = 8',
-                'O teste resultou em 🎲8.\nVocê falhou em se rebelar.\nAgora seu suserano está de olho em você.'
-                '\n\n-15% de chance de Rebelião!'
-            )
+        message = 'Você decidiu se rebelar, mas seu suserano era forte de mais.\n' \
+                  'Você perdeu essa revolta e seu exercito pessoal sofreu baixas.\n'\
+                  f'Sua chance de revolta agora é {revolt_chance}.'
+
+        if win:
+            message = 'Você decidiu se rebelar, o suserano perdeu o controle sobre você.\n' \
+                      'Você agora é um reino livre novamente!'
+
+        showinfo('Decidiu esperar', message)
+
+        self.__update_phase_frame()
 
     # not_revolt
     def __omit(self, event) -> None:

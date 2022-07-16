@@ -26,6 +26,8 @@ class Board:
         if win:
             if len(self.__vassals) > 0:
                 self.__state = STATES.REVOLT
+                self.__remaining_rounds = len(self.__vassals)
+                self.__current_action_selector = self.__vassals[0]
             else:
                 self.__state = STATES.BATTLE
         else:
@@ -38,6 +40,8 @@ class Board:
 
         if len(self.__vassals) > 0:
             self.__state = STATES.REVOLT
+            self.__remaining_rounds = len(self.__vassals)
+            self.__current_action_selector = self.__vassals[0]
         else:
             self.__state = STATES.BATTLE
 
@@ -50,21 +54,22 @@ class Board:
         pass
 
     def revolt(self) -> [bool, int]:
-        if self.__remaining_rounds == 0:
-            self.__remaining_rounds = len(self.__vassals)
-
-        response = [win, revolt_chance] = self.__current_action_selector.revolt()
+        response = [win, _] = self.__current_action_selector.revolt()
 
         self.__remaining_rounds -= 1
+
+        if win:
+            self.__vassals = list(filter(lambda vassal: vassal != self.__current_action_selector, self.__vassals))
+
+        if self.__remaining_rounds == 0:
+            self.__state = STATES.BATTLE
+            self.initialize_card_game()
+        else:
+            self.__current_action_selector = self.__vassals[len(self.__vassals) - self.__remaining_rounds]
 
         return response
 
     def not_revolt(self) -> [bool, int]:
-        self.__vassals = [Reign(1), Reign(2)]
-        if self.__remaining_rounds == 0:
-            self.__remaining_rounds = len(self.__vassals)
-            self.__current_action_selector = self.__vassals[0]
-
         response = self.__current_action_selector.not_revolt()
 
         self.__remaining_rounds -= 1
@@ -80,8 +85,9 @@ class Board:
     def handle_winner_vassals(self, winner: Reign) -> None:
         pass
 
-    def get_current_card_selector(self) -> Reign:
-        pass
+    @property
+    def current_action_selector(self) -> Reign:
+        return self.__current_action_selector
 
     def decrement_remaining_rounds(self) -> None:
         pass

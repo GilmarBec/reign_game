@@ -9,7 +9,7 @@ class Board:
     __cards: [[Card]] = []
     __vassals: [Reign]
     __difficulty: int
-    __state: int = 0
+    __state: int
     __current_card_selector: Reign
     __remaining_rounds: int = 0
 
@@ -18,6 +18,7 @@ class Board:
         self.__defender = defender
         self.__vassals = attacker.vassals + defender.vassals
         self.__difficulty = difficulty
+        self.__state = STATES.REVOLT
 
     def army_faith(self) -> [bool, int]:
         [win, die_result] = self.__attacker.army_faith(self.__difficulty)
@@ -52,7 +53,7 @@ class Board:
         pass
 
     def not_revolt(self) -> [bool, int]:
-        pass
+        self.__vassals
 
     def handle_winner_vassals(self, winner: Reign) -> None:
         pass

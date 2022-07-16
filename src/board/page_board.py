@@ -175,35 +175,32 @@ class PageBoard(AbstractPage):
         Label(self.__action_frame, text=f'Precisa tirar {revolt_chance} ou + para Vitória.', font=("Arial", 20)).pack()
 
     def __build_card_game(self) -> None:
-        joker_position = (0, 0)
+        cards = self.__board.cards
 
-        for i in range(5):
-            for j in range(5):
-                is_joker = i == joker_position[0] and j == joker_position[1]
-
+        for i in range(len(cards)):
+            for j in range(len(cards[i])):
                 label = Label(self.__action_frame, text='🂠', font=("Arial", 80))
                 label.grid(row=i, column=j)
 
-                if is_joker:
-                    label.bind('<Button-1>', (
-                        lambda event, row=i, column=j: self.__turn_joker(row, column)
-                    ))
-                else:
-                    label.bind('<Button-1>', (
-                        lambda event, row=i, column=j: self.__turn_card(row, column)
-                    ))
+                label.bind('<Button-1>', (
+                    lambda event, row=i, column=j: self.__turn_card(row, column)
+                ))
 
     def __turn_card(self, row, column) -> None:
+        if self.__board.select_card(row, column):
+            label = Label(self.__action_frame, text='🃏', font=("Arial", 60))
+            label.grid(row=row, column=column)
+            showinfo('Vitória', 'Ataque bem sucedido!')
+            self.__go_to_table()
+            return
+
         card = CARDS[randint(0, len(CARDS) - 1)]
 
         label = Label(self.__action_frame, text=card, font=("Arial", 80))
         label.grid(row=row, column=column)
 
-    def __turn_joker(self, row, column) -> None:
-        label = Label(self.__action_frame, text='🃏', font=("Arial", 60))
-        label.grid(row=row, column=column)
-        showinfo('Vitória', 'Ataque bem sucedido!')
-        self.__go_to_table()
+        if self.__board.state == STATES.ENDED:
+            self.__update_phase_frame()
 
     def __revolt(self, event) -> None:
         [win, revolt_chance] = self.__board.revolt()
@@ -275,6 +272,9 @@ class PageBoard(AbstractPage):
 
         elif self.__state == STATES.BATTLE:
             self.__build_card_game()
+
+        elif self.__state == STATES.ENDED:
+            self.__go_to_table()
 
     def __go_to_table(self) -> None:
         self._select_page('TABLE')

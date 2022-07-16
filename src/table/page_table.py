@@ -1,7 +1,6 @@
 from tkinter import Button, Frame, Label, Canvas, Event
 from tkinter.font import BOLD, Font
 from src.common.pages import AbstractPage
-from src.reign import Reign
 from src.table.table import Table
 
 
@@ -20,6 +19,13 @@ class PageTable(AbstractPage):
 
         if data:
             self.__table = data
+        else:
+            end_game = self.__table.verify_end_game()
+            if end_game:
+                self._notify_message(f"Game Over")
+                self._go_to_menu()
+                return
+            self._notify_message("Vassalo(s) adicionado(s) ao novo suserano")
 
         self.__build_frame_players_list(self.__table.current_reign.id)
         self.__build_frame_table(self.__table.current_reign.id)
@@ -135,7 +141,12 @@ class PageTable(AbstractPage):
         self._select_page('BOARD', board)
 
     def __end_turn(self) -> None:
-        self.__table.end_turn()
+        end_turn = self.__table.end_turn()
+
+        if not end_turn:
+            self._notify_message(f"Ação impossível, o jogador já pulou 2 turnos!")
+            return
+
         self.__select_player()
 
     def __select_player(self) -> None:

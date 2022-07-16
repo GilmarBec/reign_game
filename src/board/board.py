@@ -18,7 +18,7 @@ class Board:
         self.__defender = defender
         self.__vassals = attacker.vassals + defender.vassals
         self.__difficulty = difficulty
-        self.__state = STATES.REVOLT
+        self.__state = STATES.ARMY_FAITH
 
     def army_faith(self) -> [bool, int]:
         [win, die_result] = self.__attacker.army_faith(self.__difficulty)

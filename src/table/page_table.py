@@ -24,6 +24,9 @@ class PageTable(AbstractPage):
         self.__build_frame_players_list(self.__table.current_reign.id)
         self.__build_frame_table(self.__table.current_reign.id)
 
+        self.__table.reigns[0].vassals.append(self.__table.reigns[1])
+        self.__table.reigns[1].overlord = self.__table.reigns[0]
+
         Button(self._frame, text='🔙', command=self._go_to_menu, font=("Arial", 25))\
             .grid(row=0, column=5, padx=10, pady=10, ipady=0)
 
@@ -111,7 +114,7 @@ class PageTable(AbstractPage):
                         pad_left + reign_width / 4, pad_up + reign_width / 4,
                         pad_left + (reign_width / 2 + reign_width / 4), pad_up + (reign_width / 2 + reign_width / 4),
                         fill="gray",
-                        tags="reign_symbol",
+                        tags="reign",
                         width=10,
                         outline=reign.overlord.color
                     )
@@ -120,19 +123,56 @@ class PageTable(AbstractPage):
                         pad_left + reign_width / 4, pad_up + reign_width / 4,
                         pad_left + (reign_width / 2 + reign_width / 4), pad_up + (reign_width / 2 + reign_width / 4),
                         fill="gray",
-                        tags="reign_symbol"
+                        tags="reign"
                     )
 
                 canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
                                     text=reign.symbol,
                                     font=Font(family="Arial", size=symbol_size),
-                                    fill=symbol_color)
+                                    fill=symbol_color,
+                                    tags="reign")
 
         canvas.tag_bind('reign', "<Button-1>", self.__attack)
 
+    def __callback(self, e):
+        x = e.x
+        y = e.y
+        return x, y
+
     def __attack(self, event: Event) -> None:
-        board = self.__table.attack(1)
-        self._select_page('BOARD', board)
+        x, y = self.__callback(event)
+
+        if 50 < y < 300:
+            if 50 < x < 300:
+                defender_id = 0
+            elif 300 <= x < 550:
+                defender_id = 1
+            elif 550 <= x < 800:
+                defender_id = 2
+            else:
+                defender_id = 3
+        else:
+            if 50 < x < 300:
+                defender_id = 4
+            elif 300 <= x < 550:
+                defender_id = 5
+            elif 550 <= x < 800:
+                defender_id = 6
+            else:
+                defender_id = 7
+
+        if defender_id == self.__table.current_reign.id:
+            self._notify_message("Reino inválido")
+        elif self.__table.get_reign(defender_id).overlord is not None:
+            print(Reign(defender_id))
+            if self.__table.get_reign(defender_id).overlord.id == self.__table.current_reign.id:
+                self._notify_message("Reino inválido")
+            else:
+                board = self.__table.attack(self.__table.get_reign(defender_id).overlord.id)
+                self._select_page('BOARD', board)
+        else:
+            board = self.__table.attack(defender_id)
+            self._select_page('BOARD', board)
 
     def __end_turn(self) -> None:
         self.__table.end_turn()

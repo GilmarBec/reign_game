@@ -95,3 +95,7 @@ class Reign:
     @vassals.setter
     def vassals(self, vassals: [any]):
         self.__vassals = vassals
+
+    @overlord.setter
+    def overlord(self, overlord: [any]):
+        self.__overlord = overlord

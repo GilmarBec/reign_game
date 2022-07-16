@@ -4,6 +4,8 @@ from tkinter.messagebox import showinfo
 from .board import Board
 from .board_constants import STATES, CARDS
 from src.common.pages import AbstractPage
+from tkinter.font import Font
+from ..reign import Reign
 
 
 class PageBoard(AbstractPage):
@@ -22,6 +24,19 @@ class PageBoard(AbstractPage):
     def build(self, data: any = None) -> None:
         if data is not None:
             self.__board = data
+
+        attacker = self.__board.attacker
+        defender = self.__board.defender
+
+        attacker.vassals.append(Reign(0))
+        attacker.vassals.append(Reign(6))
+        attacker.vassals.append(Reign(0))
+        attacker.vassals.append(Reign(6))
+
+        defender.vassals.append(Reign(4))
+        defender.vassals.append(Reign(3))
+        defender.vassals.append(Reign(4))
+        defender.vassals.append(Reign(7))
 
         self._build_frame()
         self.__draw_attacker_side()
@@ -62,6 +77,11 @@ class PageBoard(AbstractPage):
             fill=attacker.color
         )
 
+        canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
+                           text=attacker.symbol,
+                           font=Font(family="Arial", size=50),
+                           fill="light gray")
+
         pad_up += 25 + reign_height
 
         for i in range(len(attacker_vassals)):
@@ -77,6 +97,10 @@ class PageBoard(AbstractPage):
                     reign_width + pad_left, reign_height + pad_up,
                     fill=attacker_vassals[i].color
                 )
+                canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
+                                   text=attacker_vassals[i].symbol,
+                                   font=Font(family="Arial", size=20),
+                                   fill="light gray")
             else:
                 pad_left = 25
                 line_end = False
@@ -85,6 +109,10 @@ class PageBoard(AbstractPage):
                     reign_width + pad_left, reign_height + pad_up,
                     fill=attacker_vassals[i].color
                 )
+                canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
+                                   text=attacker_vassals[i].symbol,
+                                   font=Font(family="Arial", size=20),
+                                   fill="light gray")
 
             if line_end:
                 pad_up += 25 + reign_height
@@ -113,6 +141,11 @@ class PageBoard(AbstractPage):
             fill=defender.color
         )
 
+        canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
+                           text=defender.symbol,
+                           font=Font(family="Arial", size=50),
+                           fill="light gray")
+
         pad_up = pad_up - 100
 
         for i in range(len(defender_vassals)):
@@ -128,6 +161,10 @@ class PageBoard(AbstractPage):
                     reign_width + pad_left, reign_height + pad_up,
                     fill=defender_vassals[i].color
                 )
+                canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
+                                   text=defender_vassals[i].symbol,
+                                   font=Font(family="Arial", size=20),
+                                   fill="light gray")
             else:
                 pad_left = 25
                 line_end = False
@@ -136,6 +173,10 @@ class PageBoard(AbstractPage):
                     reign_width + pad_left, reign_height + pad_up,
                     fill=defender_vassals[i].color
                 )
+                canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
+                                   text=defender_vassals[i].symbol,
+                                   font=Font(family="Arial", size=20),
+                                   fill="light gray")
 
             if line_end:
                 pad_up = pad_up - 25 - reign_height

@@ -18,6 +18,8 @@ class Table:
         return [self.get_reign(i) for i in range(len(self.__reigns))]
 
     def attack(self, defender_reign_id: int) -> Board:
+        self.__current_reign.times_omitted = 0
+
         return Board(
             difficulty=self.__difficulty,
             attacker=self.__current_reign,
@@ -25,15 +27,20 @@ class Table:
         )
 
     def change_current_player(self) -> None:
-        pass
-
-    def end_turn(self) -> None:
         ordered_reigns = rotate(self.reigns, self.current_reign.id + 1)
 
         for reign in ordered_reigns:
             if reign.overlord is None:
                 self.__current_reign = reign
                 break
+
+    def end_turn(self) -> bool:
+        if self.__current_reign.times_omitted >= 2:
+            return False
+
+        self.__current_reign.times_omitted += 1
+        self.change_current_player()
+        return True
 
     @property
     def current_reign(self) -> Reign:
@@ -47,4 +54,12 @@ class Table:
         raise AssertionError(f'Reign with ID[{reign_id}] not exists')
 
     def verify_end_game(self) -> bool:
-        pass
+        reign = self.__current_reign
+        if reign.overlord:
+            reign = reign.overlord
+
+        if len(reign.vassals) == len(self.__reigns) - 1:
+            return True
+
+        self.change_current_player()
+        return False

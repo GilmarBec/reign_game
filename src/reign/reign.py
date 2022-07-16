@@ -13,6 +13,7 @@ class Reign:
     __revolt_chance: int = 0  # Min: 0, Max: 15
     __symbol: str
     __vassals: [any]
+    __times_omitted: int = 0
 
     def __init__(self, identifier: int):
         self.__id = identifier
@@ -95,3 +96,15 @@ class Reign:
     @vassals.setter
     def vassals(self, vassals: [any]):
         self.__vassals = vassals
+
+    @overlord.setter
+    def overlord(self, overlord: any):
+        self.__overlord = overlord
+
+    @property
+    def times_omitted(self):
+        return self.__times_omitted
+
+    @times_omitted.setter
+    def times_omitted(self, number: int):
+        self.__times_omitted = number

@@ -1,6 +1,7 @@
 from tkinter import Button, Frame, Label, Canvas, Event
 from tkinter.font import BOLD, Font
 from src.common.pages import AbstractPage
+from src.reign import Reign
 from src.table.table import Table
 
 
@@ -21,7 +22,7 @@ class PageTable(AbstractPage):
             self.__table = data
 
         self.__build_frame_players_list(self.__table.current_reign.id)
-        self.__build_frame_table()
+        self.__build_frame_table(self.__table.current_reign.id)
 
         Button(self._frame, text='🔙', command=self._go_to_menu, font=("Arial", 25))\
             .grid(row=0, column=5, padx=10, pady=10, ipady=0)
@@ -39,22 +40,39 @@ class PageTable(AbstractPage):
 
         for reign in self.__table.reigns:
             font = font_simple
+            background = "gray"
+            relief = "raised"
             if reign.id == current_reign_id:
                 font = font_bold
+                background = "light gray"
+                relief = "sunken"
 
-            Label(frame, text=reign.symbol, font=font, fg=reign.color).grid(row=reign.id, column=0, padx=10, pady=20)
-            Label(frame, text='Reino', font=font, fg=reign.color).grid(row=reign.id, column=1, padx=10, pady=20)
+            Label(frame,
+                  text=reign.symbol,
+                  font=font,
+                  fg=reign.color,
+                  bg=background,
+                  relief=relief,
+                  borderwidth=2).grid(row=reign.id, column=0, padx=10, pady=20)
 
-    def __build_frame_table(self) -> None:
+            Label(frame,
+                  text='Reino',
+                  font=font,
+                  fg=reign.color,
+                  bg=background,
+                  relief=relief,
+                  borderwidth=2).grid(row=reign.id, column=1, padx=10, pady=20)
+
+    def __build_frame_table(self, current_reign_id: int) -> None:
         frame = Frame(self._frame, pady=50, padx=50)
         frame.grid(row=1, column=1, padx=10, rowspan=2, columnspan=4)
 
         canvas = Canvas(frame, height=600, width=1100, bg="#5A3828")
-        self.__draw_map(canvas)
+        self.__draw_map(canvas, current_reign_id)
 
         canvas.pack()
 
-    def __draw_map(self, canvas: Canvas) -> None:
+    def __draw_map(self, canvas: Canvas, current_reign_id: int) -> None:
         reign_width: int = 250
         reign_height: int = 250
 
@@ -68,12 +86,47 @@ class PageTable(AbstractPage):
                 reign = reigns_to_create.pop(0)
                 pad_left = 50 + column * reign_width
                 pad_up = 50 + row * reign_height
+
+                if reign.id == current_reign_id:
+                    symbol_color = reign.color
+                    symbol_size = 50
+                else:
+                    symbol_color = "dark gray"
+                    symbol_size = 30
+
                 canvas.create_rectangle(
                     pad_left, pad_up,
                     reign_width + pad_left, reign_height + pad_up,
                     fill=reign.color,
                     tags="reign"
                 )
+
+                if reign.overlord is not None:
+                    canvas.create_text((pad_left + 30, pad_up + 30),
+                                       text=reign.overlord.symbol,
+                                       font=Font(family="Arial", size=30),
+                                       fill=reign.overlord.color)
+
+                    canvas.create_rectangle(
+                        pad_left + reign_width / 4, pad_up + reign_width / 4,
+                        pad_left + (reign_width / 2 + reign_width / 4), pad_up + (reign_width / 2 + reign_width / 4),
+                        fill="gray",
+                        tags="reign_symbol",
+                        width=10,
+                        outline=reign.overlord.color
+                    )
+                else:
+                    canvas.create_rectangle(
+                        pad_left + reign_width / 4, pad_up + reign_width / 4,
+                        pad_left + (reign_width / 2 + reign_width / 4), pad_up + (reign_width / 2 + reign_width / 4),
+                        fill="gray",
+                        tags="reign_symbol"
+                    )
+
+                canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
+                                    text=reign.symbol,
+                                    font=Font(family="Arial", size=symbol_size),
+                                    fill=symbol_color)
 
         canvas.tag_bind('reign', "<Button-1>", self.__attack)
 
@@ -93,6 +146,7 @@ class PageTable(AbstractPage):
 
     def __indicate_reign(self, reign_id: int) -> None:
         self.__build_frame_players_list(reign_id)
+        self.__build_frame_table(reign_id)
 
     def end_game(self) -> None:
         pass

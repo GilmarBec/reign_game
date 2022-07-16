@@ -161,7 +161,6 @@ class PageTable(AbstractPage):
         if defender_id == self.__table.current_reign.id:
             self._notify_message("Reino inválido")
         elif self.__table.get_reign(defender_id).overlord is not None:
-            print(Reign(defender_id))
             if self.__table.get_reign(defender_id).overlord.id == self.__table.current_reign.id:
                 self._notify_message("Reino inválido")
             else:

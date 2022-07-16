@@ -24,10 +24,26 @@ class Reign:
         self.__army = self.__DEFAULT_ARMY
 
     def revolt(self) -> [bool, int]:
-        pass
+        random_n = randint(0, 20)
+
+        if random_n >= 20 - self.__revolt_chance:
+            self.__revolt_chance = 0
+            self.__overlord.vassals = list(filter(lambda vassal: vassal != self, self.__overlord.vassals))
+            self.__overlord = None
+            return [True, random_n]
+
+        if self.__revolt_chance >= 9:
+            self.__revolt_chance -= 3
+
+        return [False, self.__revolt_chance]
 
     def not_revolt(self) -> [bool, int]:
-        pass
+        if self.__revolt_chance >= 15:
+            self.__revolt_chance = 9
+            return [False, self.__revolt_chance]
+
+        self.__revolt_chance += 3
+        return [True, self.__revolt_chance]
 
     def army_betrayal(self) -> [bool, int]:
         random_n = randint(0, 20)
@@ -63,6 +79,10 @@ class Reign:
     @property
     def overlord(self) -> any:
         return self.__overlord
+
+    @property
+    def revolt_chance(self) -> int:
+        return self.__revolt_chance
 
     @property
     def symbol(self) -> str:

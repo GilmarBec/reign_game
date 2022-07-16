@@ -9,8 +9,8 @@ class Board:
     __cards: [[Card]] = []
     __vassals: [Reign]
     __difficulty: int
-    __state: int = 0
-    __current_card_selector: Reign
+    __state: int
+    __current_action_selector: Reign
     __remaining_rounds: int = 0
 
     def __init__(self, difficulty: int, attacker: Reign, defender: Reign):
@@ -18,6 +18,7 @@ class Board:
         self.__defender = defender
         self.__vassals = attacker.vassals + defender.vassals
         self.__difficulty = difficulty
+        self.__state = STATES.REVOLT
 
     def army_faith(self) -> [bool, int]:
         [win, die_result] = self.__attacker.army_faith(self.__difficulty)
@@ -25,6 +26,8 @@ class Board:
         if win:
             if len(self.__vassals) > 0:
                 self.__state = STATES.REVOLT
+                self.__remaining_rounds = len(self.__vassals)
+                self.__current_action_selector = self.__vassals[0]
             else:
                 self.__state = STATES.BATTLE
         else:
@@ -37,6 +40,8 @@ class Board:
 
         if len(self.__vassals) > 0:
             self.__state = STATES.REVOLT
+            self.__remaining_rounds = len(self.__vassals)
+            self.__current_action_selector = self.__vassals[0]
         else:
             self.__state = STATES.BATTLE
 
@@ -49,16 +54,40 @@ class Board:
         pass
 
     def revolt(self) -> [bool, int]:
-        pass
+        response = [win, _] = self.__current_action_selector.revolt()
+
+        self.__remaining_rounds -= 1
+
+        if win:
+            self.__vassals = list(filter(lambda vassal: vassal != self.__current_action_selector, self.__vassals))
+
+        if self.__remaining_rounds == 0:
+            self.__state = STATES.BATTLE
+            self.initialize_card_game()
+        else:
+            self.__current_action_selector = self.__vassals[len(self.__vassals) - self.__remaining_rounds]
+
+        return response
 
     def not_revolt(self) -> [bool, int]:
-        pass
+        response = self.__current_action_selector.not_revolt()
+
+        self.__remaining_rounds -= 1
+
+        if self.__remaining_rounds == 0:
+            self.__state = STATES.BATTLE
+            self.initialize_card_game()
+        else:
+            self.__current_action_selector = self.__vassals[len(self.__vassals) - self.__remaining_rounds]
+
+        return response
 
     def handle_winner_vassals(self, winner: Reign) -> None:
         pass
 
-    def get_current_card_selector(self) -> Reign:
-        pass
+    @property
+    def current_action_selector(self) -> Reign:
+        return self.__current_action_selector
 
     def decrement_remaining_rounds(self) -> None:
         pass

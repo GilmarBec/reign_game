@@ -13,7 +13,6 @@ class PageBoard(AbstractPage):
 
     def __init__(self, window):
         super().__init__(window)
-        self.__state = STATES.ARMY_FAITH
 
     @property
     def page_name(self) -> str:
@@ -30,7 +29,7 @@ class PageBoard(AbstractPage):
         self.__action_frame = Frame(self._frame, pady=10, padx=10)
         self.__action_frame.grid(row=0, column=1, padx=10, rowspan=2)
 
-        self.__build_army_faith()
+        self.__update_phase_frame()
 
         Button(self._frame, text='🔙', command=self._go_to_menu, font=("Arial", 25))\
             .grid(row=0, column=3, padx=10, pady=10, sticky='ne')
@@ -158,16 +157,22 @@ class PageBoard(AbstractPage):
     def __build_revolt_option(self) -> None:
         Label(self.__action_frame, text='Chance de Rebelião', font=("Arial", 20)).pack()
 
-        sword = Label(self.__action_frame, text='⚔  45% de sucesso', cursor='hand2', font=("Arial", 30))
-        sleep = Label(self.__action_frame, text='⏳ +15% de sucesso', cursor='exchange', font=("Arial", 30))
+        revolt_chance = self.__board.current_action_selector.revolt_chance
 
-        sword.bind('<Button-1>', self.__try_revolt)
-        sleep.bind('<Button-1>', self.__try_sleep)
+        omit_message = f'⏳ +3 de chance de rebelião'
+        if revolt_chance >= 15:
+            omit_message = f'⏳ -{revolt_chance - 9} chance de rebelião'
+
+        sword = Label(self.__action_frame, text=f'⚔  {revolt_chance} de sucesso', cursor='hand2', font=("Arial", 30))
+        omit = Label(self.__action_frame, text=omit_message, cursor='exchange', font=("Arial", 30))
+
+        sword.bind('<Button-1>', self.__revolt)
+        omit.bind('<Button-1>', self.__omit)
 
         sword.pack()
-        sleep.pack()
+        omit.pack()
 
-        Label(self.__action_frame, text='Precisa tirar maior que 9 para Vitória.', font=("Arial", 20)).pack()
+        Label(self.__action_frame, text=f'Precisa tirar {revolt_chance} ou + para Vitória.', font=("Arial", 20)).pack()
 
     def __build_card_game(self) -> None:
         joker_position = (0, 0)
@@ -200,31 +205,37 @@ class PageBoard(AbstractPage):
         showinfo('Vitória', 'Ataque bem sucedido!')
         self.__go_to_table()
 
-    def __try_revolt(self, event) -> None:
+    def __revolt(self, event) -> None:
+        [win, revolt_chance] = self.__board.revolt()
+
+        message = 'Você decidiu se rebelar, mas seu suserano era forte de mais.\n' \
+                  'Você perdeu essa revolta e seu exercito pessoal sofreu baixas.\n'\
+                  f'Sua chance de revolta agora é {revolt_chance}.'
+
+        if win:
+            message = 'Você decidiu se rebelar, o suserano perdeu o controle sobre você.\n' \
+                      'Você agora é um reino livre novamente!'
+
+        showinfo('Decidiu esperar', message)
+
         self.__update_phase_frame()
 
-        if self.__state == STATES.REVOLT:
-            self.__build_card_game()
-            showinfo(
-                'Resultado 🎲 = 8',
-                'O teste resultou em 🎲8.\nVocê falhou em se rebelar.\nAgora seu suserano está de olho em você.'
-                '\n\n-15% de chance de Rebelião!'
-            )
+    # not_revolt
+    def __omit(self, event) -> None:
+        [win, revolt_chance] = self.__board.not_revolt()
 
-    def __try_sleep(self, event) -> None:
+        message = 'Você decidiu esperar, você esperou de mais!\n' \
+                  'Rumores de que você não está apto para ser rei se espalham.\n'
+
+        if win:
+            message = 'Você decidiu esperar, ganhando confiança do seu suserano.\n'
+
+        showinfo('Decidiu esperar', message + f'Sua chance de revolta agora é {revolt_chance}.')
+
         self.__update_phase_frame()
-
-        if self.__state == STATES.ARMY_FAITH:
-            self.__build_card_game()
-            showinfo(
-                'Decidiu esperar',
-                'Você decidiu esperar, ganhando confiança do seu suserano.\nAumentou as chances de revolta com sucesso em +15%.'
-            )
 
     def __roll_dice(self, event) -> None:
-        self.__update_phase_frame()
-
-        self.__state = self.__board.state
+        self.__update_phase_frame(False)
 
         if self.__state == STATES.ARMY_FAITH:
             [win, die_result] = self.__board.army_faith()
@@ -243,20 +254,25 @@ class PageBoard(AbstractPage):
 
             self._notify_message(f'Resultado 🎲 = {die_result}\n\n{message}')
 
-        self.__state = self.__board.state
         self.__update_phase_frame()
 
-    def __update_phase_frame(self) -> None:
+    def __update_phase_frame(self, update_state: bool = True) -> None:
+        if update_state:
+            self.__state = self.__board.state
+
         self.__action_frame.destroy()
         self.__action_frame = Frame(self._frame, pady=10, padx=10)
         self.__action_frame.grid(row=0, column=1, padx=10, rowspan=2)
 
         if self.__state == STATES.ARMY_FAITH:
             self.__build_army_faith()
+
         elif self.__state == STATES.ARMY_BETRAYAL:
             self.__build_army_betrayal()
+
         elif self.__state == STATES.REVOLT:
             self.__build_revolt_option()
+
         elif self.__state == STATES.BATTLE:
             self.__build_card_game()
 

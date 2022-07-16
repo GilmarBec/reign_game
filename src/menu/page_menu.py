@@ -2,6 +2,7 @@ from tkinter import Button, Label
 from tkinter.ttk import Combobox
 
 from src.common.pages import AbstractPage
+from src.menu import DIFFICULTY
 from src.table.table import Table
 
 
@@ -27,7 +28,7 @@ class PageMenu(AbstractPage):
             grid={'row': 2, 'column': 2, 'padx': 10, 'pady': 10}
         )
         self.__combobox['difficulty'] = self.__build_combobox(
-            'Dificuldade', ['fácil', 'médio', 'difícil'],
+            'Dificuldade', list(DIFFICULTY.keys()),
             grid={'row': 3, 'column': 2, 'padx': 10, 'pady': 10}
         )
 
@@ -49,5 +50,5 @@ class PageMenu(AbstractPage):
     def __start_game(self):
         self._select_page('TABLE', Table(
             n_players=int(self.__combobox['n_players'].get()),
-            difficulty=self.__combobox['difficulty'].get(),
+            difficulty=DIFFICULTY[self.__combobox['difficulty'].get()],
         ))

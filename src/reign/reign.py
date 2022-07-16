@@ -1,3 +1,5 @@
+from random import randint
+
 from .reign_constants import SYMBOLS, COLORS
 
 
@@ -27,11 +29,24 @@ class Reign:
     def not_revolt(self) -> [bool, int]:
         pass
 
-    def test_army_betrayal(self) -> [bool, int]:
-        pass
+    def army_betrayal(self) -> [bool, int]:
+        random_n = randint(0, 20)
 
-    def test_army_faith(self) -> [bool, int]:
-        pass
+        if random_n >= 14:
+            self.__army += 4
+            return [True, random_n]
+
+        return [False, random_n]
+
+    def army_faith(self, difficulty) -> [bool, int]:
+        loose_chance = (difficulty * 2) + len(self.vassals)
+        random_n = randint(0, 20)
+
+        if random_n >= loose_chance:
+            return [True, random_n]
+
+        self.__army = 1
+        return [False, random_n]
 
     @property
     def army(self):

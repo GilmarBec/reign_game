@@ -1,3 +1,4 @@
+from src.board.board_constants import STATES
 from src.board.card import Card
 from src.reign.reign import Reign
 
@@ -19,10 +20,27 @@ class Board:
         self.__difficulty = difficulty
 
     def army_faith(self) -> [bool, int]:
-        pass
+        [win, die_result] = self.__attacker.army_faith(self.__difficulty)
+
+        if win:
+            if len(self.__vassals) > 0:
+                self.__state = STATES.REVOLT
+            else:
+                self.__state = STATES.BATTLE
+        else:
+            self.__state = STATES.ARMY_BETRAYAL
+
+        return [win, die_result]
 
     def army_betrayal(self) -> [bool, int]:
-        pass
+        [win, die_result] = self.__attacker.army_betrayal()
+
+        if len(self.__vassals) > 0:
+            self.__state = STATES.REVOLT
+        else:
+            self.__state = STATES.BATTLE
+
+        return [win, die_result]
 
     def select_card(self) -> bool:
         pass

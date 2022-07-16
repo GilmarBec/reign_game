@@ -28,16 +28,6 @@ class PageBoard(AbstractPage):
         attacker = self.__board.attacker
         defender = self.__board.defender
 
-        attacker.vassals.append(Reign(0))
-        attacker.vassals.append(Reign(6))
-        attacker.vassals.append(Reign(0))
-        attacker.vassals.append(Reign(6))
-
-        defender.vassals.append(Reign(4))
-        defender.vassals.append(Reign(3))
-        defender.vassals.append(Reign(4))
-        defender.vassals.append(Reign(7))
-
         self._build_frame()
         self.__draw_attacker_side()
         self.__draw_defender_side()

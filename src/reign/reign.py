@@ -27,7 +27,12 @@ class Reign:
         pass
 
     def not_revolt(self) -> [bool, int]:
-        pass
+        if self.__revolt_chance >= 15:
+            self.__revolt_chance = 9
+            return [False, self.__revolt_chance]
+
+        self.__revolt_chance += 3
+        return [True, self.__revolt_chance]
 
     def army_betrayal(self) -> [bool, int]:
         random_n = randint(0, 20)

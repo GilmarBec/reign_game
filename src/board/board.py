@@ -10,7 +10,7 @@ class Board:
     __vassals: [Reign]
     __difficulty: int
     __state: int
-    __current_card_selector: Reign
+    __current_action_selector: Reign
     __remaining_rounds: int = 0
 
     def __init__(self, difficulty: int, attacker: Reign, defender: Reign):
@@ -50,10 +50,32 @@ class Board:
         pass
 
     def revolt(self) -> [bool, int]:
-        pass
+        if self.__remaining_rounds == 0:
+            self.__remaining_rounds = len(self.__vassals)
+
+        response = [win, revolt_chance] = self.__current_action_selector.revolt()
+
+        self.__remaining_rounds -= 1
+
+        return response
 
     def not_revolt(self) -> [bool, int]:
-        self.__vassals
+        self.__vassals = [Reign(1), Reign(2)]
+        if self.__remaining_rounds == 0:
+            self.__remaining_rounds = len(self.__vassals)
+            self.__current_action_selector = self.__vassals[0]
+
+        response = self.__current_action_selector.not_revolt()
+
+        self.__remaining_rounds -= 1
+
+        if self.__remaining_rounds == 0:
+            self.__state = STATES.BATTLE
+            self.initialize_card_game()
+        else:
+            self.__current_action_selector = self.__vassals[len(self.__vassals) - self.__remaining_rounds]
+
+        return response
 
     def handle_winner_vassals(self, winner: Reign) -> None:
         pass

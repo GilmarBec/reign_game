@@ -4,8 +4,8 @@ from src.common.decorators import setter
 
 
 class AbstractPage:
-    _frame: Frame
-    _window: Tk
+    _frame: Frame = None
+    _window: Tk = None
     _page_router: any = None
 
     def __init__(self, window: Tk):
@@ -32,6 +32,9 @@ class AbstractPage:
         self._frame.destroy()
 
     def _build_frame(self) -> None:
+        if self._frame is not None:
+            self._frame.destroy()
+
         self._frame = Frame(self._window, background='white', pady=10, padx=10)
 
     def _select_page(self, page: str, data: any = None) -> None:

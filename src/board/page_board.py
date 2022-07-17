@@ -5,7 +5,6 @@ from .board import Board
 from .board_constants import STATES, CARDS
 from src.common.pages import AbstractPage
 from tkinter.font import Font
-from ..reign import Reign
 
 
 class PageBoard(AbstractPage):
@@ -23,9 +22,6 @@ class PageBoard(AbstractPage):
     def build(self, data: any = None) -> None:
         if data is not None:
             self.__board = data
-
-        attacker = self.__board.attacker
-        defender = self.__board.defender
 
         self._build_frame()
         self.__draw_attacker_side()
@@ -138,7 +134,6 @@ class PageBoard(AbstractPage):
         pad_up = pad_up - 100
 
         for i in range(len(defender_vassals)):
-            line_end = False
             reign_height = 75
             reign_width = 75
 
@@ -246,7 +241,7 @@ class PageBoard(AbstractPage):
 
         showinfo('Decidiu esperar', message)
 
-        self.__update_phase_frame()
+        self.build()
 
     # not_revolt
     def __omit(self, event) -> None:
@@ -260,7 +255,7 @@ class PageBoard(AbstractPage):
 
         showinfo('Decidiu esperar', message + f'Sua chance de revolta agora é {revolt_chance}.')
 
-        self.__update_phase_frame()
+        self.build()
 
     def __roll_dice(self, event) -> None:
         self.__update_phase_frame(False)

@@ -1,4 +1,4 @@
-# Jogo do Reino v0.1.1-alpha
+# Jogo do Reino v1.0.0
 
 ## Requisitos
 - python versão >= 3.9

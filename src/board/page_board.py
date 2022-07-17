@@ -1,10 +1,10 @@
 from random import randint
-from tkinter import Button, Canvas, Frame, Label
+from tkinter import Button, Frame, Label
 from tkinter.messagebox import showinfo
 from .board import Board
 from .board_constants import STATES, CARDS
 from src.common.pages import AbstractPage
-from tkinter.font import Font
+from .board_side_builder import BoardSideBuilder
 
 
 class PageBoard(AbstractPage):
@@ -24,8 +24,10 @@ class PageBoard(AbstractPage):
             self.__board = data
 
         self._build_frame()
-        self.__draw_attacker_side()
-        self.__draw_defender_side()
+
+        side_builder = BoardSideBuilder(parent_frame=self._frame, action_selector=self.__board.current_action_selector)
+        side_builder.build(reign=self.__board.attacker, column=0)
+        side_builder.build(reign=self.__board.defender, column=2)
 
         self.__action_frame = Frame(self._frame, pady=10, padx=10)
         self.__action_frame.grid(row=0, column=1, padx=10, rowspan=2)
@@ -36,186 +38,6 @@ class PageBoard(AbstractPage):
             .grid(row=0, column=3, padx=10, pady=10, sticky='ne')
 
         self._frame.pack(padx=50, pady=50)
-
-    def __draw_attacker_side(self) -> None:
-        frame = Frame(self._frame, pady=10, padx=10)
-        frame.grid(row=0, column=0, padx=10, rowspan=2)
-
-        canvas = Canvas(frame, height=600, width=250)
-
-        self.__draw_attacker(canvas)
-
-        canvas.pack()
-
-    def __draw_attacker(self, canvas) -> None:
-        attacker = self.__board.attacker
-        attacker_vassals = attacker.vassals
-        action_selector = self.__board.current_action_selector
-
-        reign_width: int = 200
-        reign_height: int = 200
-        pad_left = 25
-        pad_up = 25
-
-        canvas.create_rectangle(
-            pad_left, pad_up,
-            reign_width + pad_left, reign_height + pad_up,
-            fill=attacker.color
-        )
-
-        canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
-                           text=attacker.symbol,
-                           font=Font(family="Arial", size=50),
-                           fill="light gray")
-
-        pad_up += 25 + reign_height
-
-        for i in range(len(attacker_vassals)):
-            line_end = False
-            reign_height = 75
-            reign_width = 75
-
-            if i % 2 != 0 and i != 0:
-                pad_left += (reign_width + 50)
-                line_end = True
-
-                if action_selector is not None and action_selector.id == attacker_vassals[i].id:
-                    canvas.create_rectangle(
-                        pad_left, pad_up,
-                        reign_width + pad_left, reign_height + pad_up,
-                        fill=attacker_vassals[i].color,
-                        width=5
-                    )
-                    canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
-                                       text=attacker_vassals[i].symbol,
-                                       font=Font(family="Arial", size=35),
-                                       fill="light gray")
-                else:
-                    canvas.create_rectangle(
-                        pad_left, pad_up,
-                        reign_width + pad_left, reign_height + pad_up,
-                        fill=attacker_vassals[i].color
-                    )
-                    canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
-                                       text=attacker_vassals[i].symbol,
-                                       font=Font(family="Arial", size=20),
-                                       fill="light gray")
-            else:
-                pad_left = 25
-                line_end = False
-                if action_selector is not None and action_selector.id == attacker_vassals[i].id:
-                    canvas.create_rectangle(
-                        pad_left, pad_up,
-                        reign_width + pad_left, reign_height + pad_up,
-                        fill=attacker_vassals[i].color,
-                        width=5
-                    )
-                    canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
-                                       text=attacker_vassals[i].symbol,
-                                       font=Font(family="Arial", size=35),
-                                       fill="light gray")
-                else:
-                    canvas.create_rectangle(
-                        pad_left, pad_up,
-                        reign_width + pad_left, reign_height + pad_up,
-                        fill=attacker_vassals[i].color
-                    )
-                    canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
-                                       text=attacker_vassals[i].symbol,
-                                       font=Font(family="Arial", size=20),
-                                       fill="light gray")
-
-            if line_end:
-                pad_up += 25 + reign_height
-
-    def __draw_defender_side(self) -> None:
-        frame = Frame(self._frame, pady=10, padx=10)
-        canvas = Canvas(frame, height=600, width=250)
-
-        self.__draw_defender(canvas)
-
-        canvas.pack()
-        frame.grid(row=0, column=2, padx=10, rowspan=2)
-
-    def __draw_defender(self, canvas) -> None:
-        defender = self.__board.defender
-        defender_vassals = defender.vassals
-        action_selector = self.__board.current_action_selector
-
-        reign_width: int = 200
-        reign_height: int = 200
-        pad_left = 25
-        pad_up = 600 - 25 - reign_height
-
-        canvas.create_rectangle(
-            pad_left, pad_up,
-            reign_width + pad_left, reign_height + pad_up,
-            fill=defender.color
-        )
-
-        canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
-                           text=defender.symbol,
-                           font=Font(family="Arial", size=50),
-                           fill="light gray")
-
-        pad_up = pad_up - 100
-
-        for i in range(len(defender_vassals)):
-            reign_height = 75
-            reign_width = 75
-
-            if i % 2 != 0 and i != 0:
-                pad_left += (reign_width + 50)
-                line_end = True
-
-                if action_selector is not None and action_selector.id == defender_vassals[i].id:
-                    canvas.create_rectangle(
-                        pad_left, pad_up,
-                        reign_width + pad_left, reign_height + pad_up,
-                        fill=defender_vassals[i].color,
-                        width=5
-                    )
-                    canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
-                                       text=defender_vassals[i].symbol,
-                                       font=Font(family="Arial", size=35),
-                                       fill="light gray")
-                else:
-                    canvas.create_rectangle(
-                        pad_left, pad_up,
-                        reign_width + pad_left, reign_height + pad_up,
-                        fill=defender_vassals[i].color
-                    )
-                    canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
-                                       text=defender_vassals[i].symbol,
-                                       font=Font(family="Arial", size=20),
-                                       fill="light gray")
-            else:
-                pad_left = 25
-                line_end = False
-                if action_selector is not None and action_selector.id == defender_vassals[i].id:
-                    canvas.create_rectangle(
-                        pad_left, pad_up,
-                        reign_width + pad_left, reign_height + pad_up,
-                        fill=defender_vassals[i].color,
-                        width=5
-                    )
-                    canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
-                                       text=defender_vassals[i].symbol,
-                                       font=Font(family="Arial", size=35),
-                                       fill="light gray")
-                else:
-                    canvas.create_rectangle(
-                        pad_left, pad_up,
-                        reign_width + pad_left, reign_height + pad_up,
-                        fill=defender_vassals[i].color
-                    )
-                    canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
-                                       text=defender_vassals[i].symbol,
-                                       font=Font(family="Arial", size=20),
-                                       fill="light gray")
-
-            if line_end:
-                pad_up = pad_up - 25 - reign_height
 
     def __build_army_faith(self) -> None:
         self.__build_dice_test('Teste de Exército Nativo')

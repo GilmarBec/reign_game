@@ -40,23 +40,28 @@ class PageBoard(AbstractPage):
         self._frame.pack(padx=50, pady=50)
 
     def __build_army_faith(self) -> None:
-        self.__build_dice_test('Teste de Exército Nativo')
+        loose_chance = (self.__board.difficulty * 2) + len(self.__board.attacker.vassals)
+        self.__build_dice_test(
+            title='Teste de Exército Nativo',
+            subtitle=f'Precisa tirar mais que {loose_chance} para Vitória.',
+        )
 
     def __build_army_betrayal(self) -> None:
-        self.__build_dice_test('Teste de Conquista de Exército Inimigo')
+        self.__build_dice_test(
+            title='Teste de Conquista de Exército Inimigo',
+            subtitle='Precisa tirar mais que 14 para Vitória.',
+        )
 
-    def __build_dice_test(self, title: str) -> None:
+    def __build_dice_test(self, title: str, subtitle: str) -> None:
         Label(self.__action_frame, text=title, font=("Arial", 20)).pack()
 
         dice = Label(self.__action_frame, text='🎲', font=("Arial", 200))
         dice.bind('<Button-1>', self.__roll_dice)
         dice.pack()
 
-        loose_chance = (self.__board.difficulty * 2) + len(self.__board.attacker.vassals)
-
         Label(
             self.__action_frame,
-            text=f'Precisa tirar mais que {loose_chance} para Vitória.',
+            text=subtitle,
             font=("Arial", 20),
         ).pack()
 
@@ -97,7 +102,10 @@ class PageBoard(AbstractPage):
                 ))
 
     def __turn_card(self, row, column) -> None:
-        if self.__board.select_card(row, column):
+        old_action_selector_id = self.__board.current_action_selector.id
+        is_joker = self.__board.select_card(row, column)
+
+        if is_joker:
             label = Label(self.__action_frame, text='🃏', font=("Arial", 60))
             label.grid(row=row, column=column)
             showinfo('Vitória', 'Ataque bem sucedido!')
@@ -110,7 +118,18 @@ class PageBoard(AbstractPage):
         label.grid(row=row, column=column)
 
         if self.__board.state == STATES.ENDED:
+            message = f'Jogador Defensor [{self.__board.defender.symbol}] Venceu!'
+
+            if is_joker:
+                message = f'Jogador Atacante [{self.__board.attacker.symbol}] Venceu!'
+
+            showinfo('Fim da Batalha', message)
             self.__update_phase_frame()
+            return
+
+        action_selector = self.__board.current_action_selector
+        if old_action_selector_id != action_selector.id:
+            showinfo('Troca de jogador', f'Jogador que escolhe cartas agora é [{action_selector.symbol}]')
 
     def __revolt(self, event) -> None:
         [win, revolt_chance] = self.__board.revolt()

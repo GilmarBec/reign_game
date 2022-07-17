@@ -38,7 +38,7 @@ class Board:
         return [win, die_result]
 
     def army_betrayal(self) -> [bool, int]:
-        [win, die_result] = self.__attacker.army_betrayal()
+        [win, die_result] = self.__defender.army_betrayal()
 
         if len(self.__vassals) > 0:
             self.__state = STATES.REVOLT

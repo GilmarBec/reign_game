@@ -230,7 +230,13 @@ class PageBoard(AbstractPage):
         dice.bind('<Button-1>', self.__roll_dice)
         dice.pack()
 
-        Label(self.__action_frame, text='Precisa tirar mais que 10 para Vitória.', font=("Arial", 20)).pack()
+        loose_chance = (self.__board.difficulty * 2) + len(self.__board.attacker.vassals)
+
+        Label(
+            self.__action_frame,
+            text=f'Precisa tirar mais que {loose_chance} para Vitória.',
+            font=("Arial", 20),
+        ).pack()
 
     def __build_revolt_option(self) -> None:
         Label(self.__action_frame, text='Chance de Rebelião', font=("Arial", 20)).pack()
@@ -250,7 +256,11 @@ class PageBoard(AbstractPage):
         sword.pack()
         omit.pack()
 
-        Label(self.__action_frame, text=f'Precisa tirar {20-revolt_chance} ou + para Vitória.', font=("Arial", 20)).pack()
+        Label(
+            self.__action_frame,
+            text=f'Precisa tirar {20-revolt_chance} ou + para Vitória.',
+            font=("Arial", 20),
+        ).pack()
 
     def __build_card_game(self) -> None:
         cards = self.__board.cards

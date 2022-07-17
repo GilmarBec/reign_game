@@ -230,7 +230,7 @@ class PageBoard(AbstractPage):
         dice.bind('<Button-1>', self.__roll_dice)
         dice.pack()
 
-        Label(self.__action_frame, text='Precisa tirar maior que 10 para Vitória.', font=("Arial", 20)).pack()
+        Label(self.__action_frame, text='Precisa tirar mais que 10 para Vitória.', font=("Arial", 20)).pack()
 
     def __build_revolt_option(self) -> None:
         Label(self.__action_frame, text='Chance de Rebelião', font=("Arial", 20)).pack()
@@ -250,7 +250,7 @@ class PageBoard(AbstractPage):
         sword.pack()
         omit.pack()
 
-        Label(self.__action_frame, text=f'Precisa tirar {revolt_chance} ou + para Vitória.', font=("Arial", 20)).pack()
+        Label(self.__action_frame, text=f'Precisa tirar {20-revolt_chance} ou + para Vitória.', font=("Arial", 20)).pack()
 
     def __build_card_game(self) -> None:
         cards = self.__board.cards
@@ -284,7 +284,7 @@ class PageBoard(AbstractPage):
         [win, revolt_chance] = self.__board.revolt()
 
         message = 'Você decidiu se rebelar, mas seu suserano era forte de mais.\n' \
-                  'Você perdeu essa revolta e seu exercito pessoal sofreu baixas.\n'\
+                  'Você perdeu essa revolta e seu exército pessoal sofreu baixas.\n'\
                   f'Sua chance de revolta agora é {revolt_chance}.'
 
         if win:
@@ -299,11 +299,11 @@ class PageBoard(AbstractPage):
     def __omit(self, event) -> None:
         [win, revolt_chance] = self.__board.not_revolt()
 
-        message = 'Você decidiu esperar, você esperou de mais!\n' \
+        message = 'Você decidiu esperar e esperou demais!\n' \
                   'Rumores de que você não está apto para ser rei se espalham.\n'
 
         if win:
-            message = 'Você decidiu esperar, ganhando confiança do seu suserano.\n'
+            message = 'Você decidiu esperar enquanto ganha a confiança do seu suserano.\n'
 
         showinfo('Decidiu esperar', message + f'Sua chance de revolta agora é {revolt_chance}.')
 
@@ -315,7 +315,7 @@ class PageBoard(AbstractPage):
         if self.__state == STATES.ARMY_FAITH:
             [win, die_result] = self.__board.army_faith()
 
-            message = 'Seu exército não acredita que você fez a escolha certa ao declarar este ataque!'
+            message = 'Seu exército acredita que você não fez a escolha certa ao declarar este ataque!'
             if win:
                 message = 'Seu exército estará com você nessa batalha!'
 

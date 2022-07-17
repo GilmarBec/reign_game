@@ -155,3 +155,7 @@ class Board:
     @property
     def vassals(self) -> [Reign]:
         return self.__vassals
+
+    @property
+    def difficulty(self) -> int:
+        return self.__difficulty

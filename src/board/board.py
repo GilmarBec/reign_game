@@ -1,3 +1,4 @@
+from random import randint
 from src.board.board_constants import STATES
 from src.board.card import Card
 from src.reign.reign import Reign
@@ -127,8 +128,9 @@ class Board:
 
         self.__cards = ([[Card() for _ in range(5)] for _ in range(len(self.vassals))]) + overlords_cards
 
-        joker_position = (0, 0)
-        self.__cards[joker_position[0]][joker_position[1]] = Card(is_joker=True)
+        joker_line = randint(0, len(self.__cards))
+        joker_column = randint(0, len(self.__cards[joker_line]))
+        self.__cards[joker_line][joker_column] = Card(is_joker=True)
 
         self.__remaining_rounds = self.__attacker.army
         self.__current_action_selector = self.__attacker

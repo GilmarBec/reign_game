@@ -10,6 +10,8 @@ class Card:
             raise AssertionError("Card Already chosen")
 
         self.__was_chosen = True
+        if self.__is_joker:
+            print("vo mata a mãe do batman")
         return self.__is_joker
 
     @property

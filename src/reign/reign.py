@@ -10,7 +10,7 @@ class Reign:
     __color: str
     __id: int
     __overlord: any = None  # Auto reference
-    __revolt_chance: int = 0  # Min: 0, Max: 15
+    __revolt_chance: int = 3  # Min: 0, Max: 15
     __symbol: str
     __vassals: [any]
     __times_omitted: int = 0
@@ -28,7 +28,7 @@ class Reign:
         random_n = randint(0, 20)
 
         if random_n >= 20 - self.__revolt_chance:
-            self.__revolt_chance = 0
+            self.__revolt_chance = 3
             self.__overlord.vassals = list(filter(lambda vassal: vassal != self, self.__overlord.vassals))
             self.__overlord = None
             return [True, random_n]

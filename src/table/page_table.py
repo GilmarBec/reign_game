@@ -50,8 +50,12 @@ class PageTable(AbstractPage):
             relief = "raised"
             if reign.id == current_reign_id:
                 font = font_bold
-                background = "light gray"
+                background = "gray"
                 relief = "sunken"
+            if reign.overlord is not None:
+                font = Font(family="Arial", size=20, overstrike=True)
+                background = "light gray"
+                relief = "ridge"
 
             Label(frame,
                   text=reign.symbol,

@@ -50,7 +50,6 @@ class PageTable(AbstractPage):
             relief = "raised"
             if reign.id == current_reign_id:
                 font = font_bold
-                background = "gray"
                 relief = "sunken"
             if reign.overlord is not None:
                 font = Font(family="Arial", size=20, overstrike=True)
@@ -192,7 +191,7 @@ class PageTable(AbstractPage):
     def __select_player(self) -> None:
         reign = self.__table.current_reign
 
-        self._notify_message(f"Turno do reino {reign.id}")
+        self._notify_message(f"Turno do reino {reign.symbol}")
         self.__indicate_reign(reign.id)
 
     def __indicate_reign(self, reign_id: int) -> None:

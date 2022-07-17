@@ -50,6 +50,7 @@ class PageBoard(AbstractPage):
     def __draw_attacker(self, canvas) -> None:
         attacker = self.__board.attacker
         attacker_vassals = attacker.vassals
+        action_selector = self.__board.current_action_selector
 
         reign_width: int = 200
         reign_height: int = 200
@@ -77,27 +78,52 @@ class PageBoard(AbstractPage):
             if i % 2 != 0 and i != 0:
                 pad_left += (reign_width + 50)
                 line_end = True
-                canvas.create_rectangle(
-                    pad_left, pad_up,
-                    reign_width + pad_left, reign_height + pad_up,
-                    fill=attacker_vassals[i].color
-                )
-                canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
-                                   text=attacker_vassals[i].symbol,
-                                   font=Font(family="Arial", size=20),
-                                   fill="light gray")
+
+                if action_selector is not None and action_selector.id == attacker_vassals[i].id:
+                    canvas.create_rectangle(
+                        pad_left, pad_up,
+                        reign_width + pad_left, reign_height + pad_up,
+                        fill=attacker_vassals[i].color,
+                        width=5
+                    )
+                    canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
+                                       text=attacker_vassals[i].symbol,
+                                       font=Font(family="Arial", size=35),
+                                       fill="light gray")
+                else:
+                    canvas.create_rectangle(
+                        pad_left, pad_up,
+                        reign_width + pad_left, reign_height + pad_up,
+                        fill=attacker_vassals[i].color
+                    )
+                    canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
+                                       text=attacker_vassals[i].symbol,
+                                       font=Font(family="Arial", size=20),
+                                       fill="light gray")
             else:
                 pad_left = 25
                 line_end = False
-                canvas.create_rectangle(
-                    pad_left, pad_up,
-                    reign_width + pad_left, reign_height + pad_up,
-                    fill=attacker_vassals[i].color
-                )
-                canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
-                                   text=attacker_vassals[i].symbol,
-                                   font=Font(family="Arial", size=20),
-                                   fill="light gray")
+                if action_selector is not None and action_selector.id == attacker_vassals[i].id:
+                    canvas.create_rectangle(
+                        pad_left, pad_up,
+                        reign_width + pad_left, reign_height + pad_up,
+                        fill=attacker_vassals[i].color,
+                        width=5
+                    )
+                    canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
+                                       text=attacker_vassals[i].symbol,
+                                       font=Font(family="Arial", size=35),
+                                       fill="light gray")
+                else:
+                    canvas.create_rectangle(
+                        pad_left, pad_up,
+                        reign_width + pad_left, reign_height + pad_up,
+                        fill=attacker_vassals[i].color
+                    )
+                    canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
+                                       text=attacker_vassals[i].symbol,
+                                       font=Font(family="Arial", size=20),
+                                       fill="light gray")
 
             if line_end:
                 pad_up += 25 + reign_height
@@ -114,6 +140,7 @@ class PageBoard(AbstractPage):
     def __draw_defender(self, canvas) -> None:
         defender = self.__board.defender
         defender_vassals = defender.vassals
+        action_selector = self.__board.current_action_selector
 
         reign_width: int = 200
         reign_height: int = 200
@@ -140,27 +167,52 @@ class PageBoard(AbstractPage):
             if i % 2 != 0 and i != 0:
                 pad_left += (reign_width + 50)
                 line_end = True
-                canvas.create_rectangle(
-                    pad_left, pad_up,
-                    reign_width + pad_left, reign_height + pad_up,
-                    fill=defender_vassals[i].color
-                )
-                canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
-                                   text=defender_vassals[i].symbol,
-                                   font=Font(family="Arial", size=20),
-                                   fill="light gray")
+
+                if action_selector is not None and action_selector.id == defender_vassals[i].id:
+                    canvas.create_rectangle(
+                        pad_left, pad_up,
+                        reign_width + pad_left, reign_height + pad_up,
+                        fill=defender_vassals[i].color,
+                        width=5
+                    )
+                    canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
+                                       text=defender_vassals[i].symbol,
+                                       font=Font(family="Arial", size=35),
+                                       fill="light gray")
+                else:
+                    canvas.create_rectangle(
+                        pad_left, pad_up,
+                        reign_width + pad_left, reign_height + pad_up,
+                        fill=defender_vassals[i].color
+                    )
+                    canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
+                                       text=defender_vassals[i].symbol,
+                                       font=Font(family="Arial", size=20),
+                                       fill="light gray")
             else:
                 pad_left = 25
                 line_end = False
-                canvas.create_rectangle(
-                    pad_left, pad_up,
-                    reign_width + pad_left, reign_height + pad_up,
-                    fill=defender_vassals[i].color
-                )
-                canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
-                                   text=defender_vassals[i].symbol,
-                                   font=Font(family="Arial", size=20),
-                                   fill="light gray")
+                if action_selector is not None and action_selector.id == defender_vassals[i].id:
+                    canvas.create_rectangle(
+                        pad_left, pad_up,
+                        reign_width + pad_left, reign_height + pad_up,
+                        fill=defender_vassals[i].color,
+                        width=5
+                    )
+                    canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
+                                       text=defender_vassals[i].symbol,
+                                       font=Font(family="Arial", size=35),
+                                       fill="light gray")
+                else:
+                    canvas.create_rectangle(
+                        pad_left, pad_up,
+                        reign_width + pad_left, reign_height + pad_up,
+                        fill=defender_vassals[i].color
+                    )
+                    canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
+                                       text=defender_vassals[i].symbol,
+                                       font=Font(family="Arial", size=20),
+                                       fill="light gray")
 
             if line_end:
                 pad_up = pad_up - 25 - reign_height
@@ -277,7 +329,7 @@ class PageBoard(AbstractPage):
 
             self._notify_message(f'Resultado 🎲 = {die_result}\n\n{message}')
 
-        self.__update_phase_frame()
+        self.build()
 
     def __update_phase_frame(self, update_state: bool = True) -> None:
         if update_state:

@@ -10,7 +10,7 @@ class Board:
     __vassals: [Reign]
     __difficulty: int
     __state: int
-    __current_action_selector: Reign
+    __current_action_selector: Reign = None
     __remaining_rounds: int = 0
 
     def __init__(self, difficulty: int, attacker: Reign, defender: Reign):

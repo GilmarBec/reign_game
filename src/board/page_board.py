@@ -269,7 +269,7 @@ class PageBoard(AbstractPage):
 
             self._notify_message(f'Resultado 🎲 = {die_result}\n\n{message}')
         elif self.__state == STATES.ARMY_BETRAYAL:
-            [win, die_result] = self.__board.army_faith()
+            [win, die_result] = self.__board.army_betrayal()
 
             message = 'Você não conseguiu convencer o exército neutro a se juntar a você nessa batalha!'
             if win:

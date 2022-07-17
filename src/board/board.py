@@ -129,8 +129,8 @@ class Board:
 
         self.__cards = ([[Card() for _ in range(5)] for _ in range(len(self.vassals))]) + overlords_cards
 
-        joker_line = 0
-        joker_column = 0
+        joker_line = randint(0, len(self.__cards) - 1)
+        joker_column = randint(0, len(self.__cards[joker_line]) - 1)
         self.__cards[joker_line][joker_column] = Card(is_joker=True)
 
         self.__remaining_rounds = self.__attacker.army

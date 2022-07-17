@@ -33,7 +33,11 @@ class BoardSideBuilder:
         if not is_attacker:
             pad_up = 600 - 25 - reign_height
 
-        self.__base_build_side(reign, pad_up, pad_left, reign_height, reign_width, 50, 0)
+        self.__base_build_side(
+            reign=reign, pad_up=pad_up, pad_left=pad_left,
+            reign_height=reign_height, reign_width=reign_width,
+            font_size=50, border=0,
+        )
 
         if is_attacker:
             pad_up += 25 + reign_height
@@ -41,7 +45,8 @@ class BoardSideBuilder:
             pad_up -= 100
 
         for i in range(len(vassals)):
-            line_end = self.__build_vassal(i, vassals[i], pad_up)
+            reign_height = 75
+            line_end = self.__build_vassal(index=i, vassal=vassals[i], pad_up=pad_up, reign_height=reign_height)
 
             if line_end:
                 if is_attacker:
@@ -63,10 +68,8 @@ class BoardSideBuilder:
             font=Font(family="Arial", size=font_size), fill="light gray"
         )
 
-    def __build_vassal(self, index, vassal, pad_up):
+    def __build_vassal(self, index: int, vassal: Reign, pad_up: int, reign_height: int):
         action_selector = self.__action_selector
-
-        reign_height = 75
         reign_width = 75
 
         line_end = index % 2 != 0 and index != 0

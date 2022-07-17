@@ -4,9 +4,9 @@ from src.reign.reign import Reign
 
 
 class Table:
-    __reigns: [Reign]
     __current_reign: Reign
     __difficulty: int
+    __reigns: [Reign]
 
     def __init__(self, n_players: int, difficulty: int):
         self.__reigns = [Reign(i) for i in range(n_players)]

@@ -1,12 +1,13 @@
 from tkinter import Frame, Tk
 from tkinter.messagebox import showinfo
 from src.common.decorators import setter
+from src.page_router import PageRouter
 
 
 class AbstractPage:
     _frame: Frame = None
     _window: Tk = None
-    _page_router: any = None
+    _page_router: PageRouter = None
 
     def __init__(self, window: Tk):
         self._window = window
@@ -16,7 +17,7 @@ class AbstractPage:
         return ''
 
     @setter
-    def page_router(self, page_router: any) -> None:
+    def page_router(self, page_router: PageRouter) -> None:
         if self._page_router is not None:
             raise ValueError('Trying to replace page router already set.')
 
@@ -47,5 +48,5 @@ class AbstractPage:
     def _reset_board(self) -> None:
         pass
 
-    def _notify_message(self, message) -> None:
-        showinfo('Mensagem', message)
+    def _notify_message(self, message, title: str = 'Mensagem') -> None:
+        showinfo(title, message)

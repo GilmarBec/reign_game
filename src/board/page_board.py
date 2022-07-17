@@ -1,5 +1,5 @@
 from random import randint
-from tkinter import Button, Frame, Label
+from tkinter import Button, Frame, Label, Event
 from tkinter.messagebox import showinfo
 from .board import Board
 from .board_constants import STATES, CARDS
@@ -12,14 +12,11 @@ class PageBoard(AbstractPage):
     __action_frame: Frame
     __board: Board
 
-    def __init__(self, window):
-        super().__init__(window)
-
     @property
     def page_name(self) -> str:
         return 'BOARD'
 
-    def build(self, data: any = None) -> None:
+    def build(self, data: Board or None = None) -> None:
         if data is not None:
             self.__board = data
 
@@ -160,7 +157,7 @@ class PageBoard(AbstractPage):
 
         self.build()
 
-    def __roll_dice(self, event) -> None:
+    def __roll_dice(self, event: Event) -> None:
         self.__update_phase_frame(False)
 
         if self.__state == STATES.ARMY_FAITH:

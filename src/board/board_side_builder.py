@@ -12,7 +12,7 @@ class BoardSideBuilder:
         self.__frame = parent_frame
         self.__action_selector = action_selector
 
-    def build(self, reign, column: int = 0):
+    def build(self, reign: Reign, column: int = 0):
         frame = Frame(self.__frame, pady=10, padx=10)
         frame.grid(row=0, column=column, padx=10, rowspan=2)
 
@@ -22,7 +22,7 @@ class BoardSideBuilder:
 
         self.__canvas.pack()
 
-    def __build_side(self, reign, is_attacker: bool):
+    def __build_side(self, reign: Reign, is_attacker: bool):
         vassals = reign.vassals
 
         reign_width: int = 200
@@ -54,7 +54,10 @@ class BoardSideBuilder:
                 else:
                     pad_up -= (25 + reign_height)
 
-    def __base_build_side(self, reign, pad_up, pad_left, reign_height, reign_width, font_size, border):
+    def __base_build_side(
+        self, reign: Reign, pad_up: int, pad_left: int,
+        reign_height: int, reign_width: int, font_size: int, border: int
+    ):
         self.__canvas.create_rectangle(
             pad_left, pad_up,
             reign_width + pad_left, reign_height + pad_up,
@@ -68,7 +71,7 @@ class BoardSideBuilder:
             font=Font(family="Arial", size=font_size), fill="light gray"
         )
 
-    def __build_vassal(self, index: int, vassal: Reign, pad_up: int, reign_height: int):
+    def __build_vassal(self, index: int, vassal: Reign, pad_up: int, reign_height: int) -> bool:
         action_selector = self.__action_selector
         reign_width = 75
 

@@ -55,7 +55,7 @@ class Reign:
 
         return [False, random_n]
 
-    def army_faith(self, difficulty) -> [bool, int]:
+    def army_faith(self, difficulty: int) -> [bool, int]:
         loose_chance = (difficulty * 2) + len(self.vassals)
         random_n = randint(0, 20)
 
@@ -66,7 +66,7 @@ class Reign:
         return [False, random_n]
 
     @property
-    def army(self):
+    def army(self) -> int:
         return self.__army
 
     @property
@@ -78,7 +78,7 @@ class Reign:
         return self.__id
 
     @property
-    def overlord(self) -> any:
+    def overlord(self) -> any or None:
         return self.__overlord
 
     @property
@@ -102,7 +102,7 @@ class Reign:
         self.__overlord = overlord
 
     @property
-    def times_omitted(self):
+    def times_omitted(self) -> int:
         return self.__times_omitted
 
     @times_omitted.setter

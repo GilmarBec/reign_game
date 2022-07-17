@@ -9,9 +9,6 @@ from src.table.table import Table
 class PageMenu(AbstractPage):
     __combobox: dict = {}
 
-    def __init__(self, window):
-        super().__init__(window)
-
     @property
     def page_name(self):
         return 'MENU'
@@ -38,7 +35,7 @@ class PageMenu(AbstractPage):
 
         self._frame.pack(padx=50, pady=50)
 
-    def __build_combobox(self, title: str, values: list, grid):
+    def __build_combobox(self, title: str, values: list, grid: dict) -> Combobox:
         combobox = Combobox(self._frame, values=values, state='readonly', font=("Arial", 20))
         combobox.grid(grid)
         combobox.current(0)

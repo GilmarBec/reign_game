@@ -68,6 +68,7 @@ class Board:
                 index = self.__attacker.vassals.index(self.__current_action_selector) + 1
 
             self.__current_action_selector = self.__attacker.vassals[index]
+            self.__remaining_rounds = self.__current_action_selector.army
             return False
         else:
             winner = self.__defender

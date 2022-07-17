@@ -7,9 +7,6 @@ from src.table.table import Table
 class PageTable(AbstractPage):
     __table: Table
 
-    def __init__(self, window):
-        super().__init__(window)
-
     @property
     def page_name(self) -> str:
         return 'TABLE'
@@ -61,7 +58,7 @@ class PageTable(AbstractPage):
                   font=font,
                   fg=reign.color,
                   bg=background,
-                  relief=relief,
+                  relief=relief,  # Label object accept str, but it's not documented
                   borderwidth=2).grid(row=reign.id, column=0, padx=10, pady=20)
 
             Label(frame,
@@ -69,7 +66,7 @@ class PageTable(AbstractPage):
                   font=font,
                   fg=reign.color,
                   bg=background,
-                  relief=relief,
+                  relief=relief,  # Label object accept str, but it's not documented
                   borderwidth=2).grid(row=reign.id, column=1, padx=10, pady=20)
 
     def __build_frame_table(self, current_reign_id: int) -> None:
@@ -140,44 +137,22 @@ class PageTable(AbstractPage):
 
         canvas.tag_bind('reign', "<Button-1>", self.__attack)
 
-    def __callback(self, e):
-        x = e.x
-        y = e.y
-        return x, y
-
     def __attack(self, event: Event) -> None:
-        x, y = self.__callback(event)
+        column, line = [((event.x - 50) // 250), ((event.y - 50) // 250)]
+        defender_id = column + (line * 4)
 
-        if 50 < y < 300:
-            if 50 < x < 300:
-                defender_id = 0
-            elif 300 <= x < 550:
-                defender_id = 1
-            elif 550 <= x < 800:
-                defender_id = 2
-            else:
-                defender_id = 3
-        else:
-            if 50 < x < 300:
-                defender_id = 4
-            elif 300 <= x < 550:
-                defender_id = 5
-            elif 550 <= x < 800:
-                defender_id = 6
-            else:
-                defender_id = 7
+        current_reign = self.__table.current_reign
+        defender = self.__table.get_reign(defender_id)
 
-        if defender_id == self.__table.current_reign.id:
+        if defender.overlord is not None:
+            defender = defender.overlord
+
+        if defender.id == current_reign.id:
             self._notify_message("Reino inválido")
-        elif self.__table.get_reign(defender_id).overlord is not None:
-            if self.__table.get_reign(defender_id).overlord.id == self.__table.current_reign.id:
-                self._notify_message("Reino inválido")
-            else:
-                board = self.__table.attack(self.__table.get_reign(defender_id).overlord.id)
-                self._select_page('BOARD', board)
-        else:
-            board = self.__table.attack(defender_id)
-            self._select_page('BOARD', board)
+            return
+
+        board = self.__table.attack(defender.id)
+        self._select_page('BOARD', board)
 
     def __end_turn(self) -> None:
         end_turn = self.__table.end_turn()
@@ -197,9 +172,3 @@ class PageTable(AbstractPage):
     def __indicate_reign(self, reign_id: int) -> None:
         self.__build_frame_players_list(reign_id)
         self.__build_frame_table(reign_id)
-
-    def end_game(self) -> None:
-        pass
-
-    def change_current_player(self) -> None:
-        pass

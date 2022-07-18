@@ -107,33 +107,34 @@ class PageTable(AbstractPage):
                     tags="reign"
                 )
 
+                start_left = pad_left + reign_width / 4
+                start_up = pad_up + reign_width / 4
+                width = 0
+                outline = ''
+
                 if reign.overlord is not None:
                     canvas.create_text((pad_left + 30, pad_up + 30),
                                        text=reign.overlord.symbol,
                                        font=Font(family="Arial", size=30),
                                        fill=reign.overlord.color)
 
-                    canvas.create_rectangle(
-                        pad_left + reign_width / 4, pad_up + reign_width / 4,
-                        pad_left + (reign_width / 2 + reign_width / 4), pad_up + (reign_width / 2 + reign_width / 4),
-                        fill="gray",
-                        tags="reign",
-                        width=10,
-                        outline=reign.overlord.color
-                    )
-                else:
-                    canvas.create_rectangle(
-                        pad_left + reign_width / 4, pad_up + reign_width / 4,
-                        pad_left + (reign_width / 2 + reign_width / 4), pad_up + (reign_width / 2 + reign_width / 4),
-                        fill="gray",
-                        tags="reign"
-                    )
+                    width = 10
+                    outline = reign.overlord.color
 
-                canvas.create_text((pad_left + reign_width / 2, pad_up + reign_height / 2),
-                                    text=reign.symbol,
-                                    font=Font(family="Arial", size=symbol_size),
-                                    fill=symbol_color,
-                                    tags="reign")
+                canvas.create_rectangle(
+                    start_left, start_up,
+                    start_left + reign_width / 2, start_up + reign_width / 2,
+                    fill="gray",
+                    tags="reign",
+                    width=width,
+                    outline=outline,
+                )
+
+                canvas.create_text(
+                    (pad_left + reign_width / 2, pad_up + reign_height / 2),
+                    text=reign.symbol, font=Font(family="Arial", size=symbol_size),
+                    fill=symbol_color, tags="reign"
+                )
 
         canvas.tag_bind('reign', "<Button-1>", self.__attack)
 

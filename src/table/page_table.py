@@ -87,7 +87,8 @@ class PageTable(AbstractPage):
         for row in range(2):
             for column in range(4):
                 if not len(reigns_to_create):
-                    break
+                    canvas.tag_bind('reign', "<Button-1>", self.__attack)
+                    return
 
                 reign = reigns_to_create.pop(0)
                 pad_left = 50 + column * reign_width
@@ -108,22 +109,24 @@ class PageTable(AbstractPage):
                 )
 
                 start_left = pad_left + reign_width / 4
-                start_up = pad_up + reign_width / 4
+                start_up = pad_up + reign_height / 4
                 width = 0
                 outline = ''
 
                 if reign.overlord is not None:
-                    canvas.create_text((pad_left + 30, pad_up + 30),
-                                       text=reign.overlord.symbol,
-                                       font=Font(family="Arial", size=30),
-                                       fill=reign.overlord.color)
+                    canvas.create_text(
+                        (pad_left + 30, pad_up + 30),
+                        text=reign.overlord.symbol,
+                        font=Font(family="Arial", size=30),
+                        fill=reign.overlord.color
+                    )
 
                     width = 10
                     outline = reign.overlord.color
 
                 canvas.create_rectangle(
                     start_left, start_up,
-                    start_left + reign_width / 2, start_up + reign_width / 2,
+                    start_left + reign_width / 2, start_up + reign_height / 2,
                     fill="gray",
                     tags="reign",
                     width=width,

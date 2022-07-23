@@ -31,7 +31,7 @@ class Board:
                 self.__current_action_selector = self.__vassals[0]
             else:
                 self.__state = STATES.BATTLE
-                self.initialize_card_game()
+                self.__initialize_card_game()
         else:
             self.__state = STATES.ARMY_BETRAYAL
 
@@ -46,7 +46,7 @@ class Board:
             self.__current_action_selector = self.__vassals[0]
         else:
             self.__state = STATES.BATTLE
-            self.initialize_card_game()
+            self.__initialize_card_game()
 
         return [win, die_result]
 
@@ -74,7 +74,7 @@ class Board:
             winner = self.__defender
             self.__vassals += [self.__attacker]
 
-        self.handle_winner_vassals(winner)
+        self.__handle_winner_vassals(winner)
 
         winner.vassals = self.__vassals
         winner.reset_army()
@@ -93,7 +93,7 @@ class Board:
 
         if self.__remaining_rounds == 0:
             self.__state = STATES.BATTLE
-            self.initialize_card_game()
+            self.__initialize_card_game()
         else:
             self.__current_action_selector = self.__vassals[len(self.__vassals) - self.__remaining_rounds]
 
@@ -106,23 +106,19 @@ class Board:
 
         if self.__remaining_rounds == 0:
             self.__state = STATES.BATTLE
-            self.initialize_card_game()
+            self.__initialize_card_game()
         else:
             self.__current_action_selector = self.__vassals[len(self.__vassals) - self.__remaining_rounds]
 
         return response
 
-    def handle_winner_vassals(self, winner: Reign) -> None:
+    def __handle_winner_vassals(self, winner: Reign) -> None:
         for vassal in self.__vassals:
             vassal.overlord = winner
             vassal.vassals = []
             vassal.reset_army()
 
-    @property
-    def current_action_selector(self) -> Reign:
-        return self.__current_action_selector
-
-    def initialize_card_game(self) -> None:
+    def __initialize_card_game(self) -> None:
         overlords_cards = [[Card() for _ in range(5)], [Card()]]
         if self.__attacker.army + self.__defender.army == 10:
             overlords_cards = [[Card() for _ in range(5)] for _ in range(2)]
@@ -145,8 +141,16 @@ class Board:
         return self.__cards
 
     @property
+    def current_action_selector(self) -> Reign:
+        return self.__current_action_selector
+
+    @property
     def defender(self) -> Reign:
         return self.__defender
+
+    @property
+    def difficulty(self) -> int:
+        return self.__difficulty
 
     @property
     def state(self) -> int:
@@ -155,7 +159,3 @@ class Board:
     @property
     def vassals(self) -> [Reign]:
         return self.__vassals
-
-    @property
-    def difficulty(self) -> int:
-        return self.__difficulty

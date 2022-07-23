@@ -62,7 +62,7 @@ class PageBoard(AbstractPage):
             font=("Arial", 20),
         ).pack()
 
-    def __build_revolt_option(self) -> None:
+    def __build_revolt_options(self) -> None:
         Label(self.__action_frame, text='Chance de Rebelião', font=("Arial", 20)).pack()
 
         revolt_chance = self.__board.current_action_selector.revolt_chance

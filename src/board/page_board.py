@@ -158,8 +158,6 @@ class PageBoard(AbstractPage):
         self.build()
 
     def __roll_dice(self, event: Event) -> None:
-        self.__update_phase_frame(False)
-
         if self.__state == STATES.ARMY_FAITH:
             [win, die_result] = self.__board.army_faith()
 
@@ -179,9 +177,8 @@ class PageBoard(AbstractPage):
 
         self.build()
 
-    def __update_phase_frame(self, update_state: bool = True) -> None:
-        if update_state:
-            self.__state = self.__board.state
+    def __update_phase_frame(self) -> None:
+        self.__state = self.__board.state
 
         self.__action_frame.destroy()
         self.__action_frame = Frame(self._frame, pady=10, padx=10)
@@ -194,7 +191,7 @@ class PageBoard(AbstractPage):
             self.__build_army_betrayal()
 
         elif self.__state == STATES.REVOLT:
-            self.__build_revolt_option()
+            self.__build_revolt_options()
 
         elif self.__state == STATES.BATTLE:
             self.__build_card_game()

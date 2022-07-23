@@ -28,11 +28,9 @@ class Table:
 
     def change_current_player(self) -> None:
         ordered_reigns = rotate(self.reigns, self.current_reign.id + 1)
+        ordered_reigns = [reign for reign in ordered_reigns if reign.overlord is None]
 
-        for reign in ordered_reigns:
-            if reign.overlord is None:
-                self.__current_reign = reign
-                break
+        self.__current_reign = ordered_reigns[0]
 
     def end_turn(self) -> bool:
         if self.__current_reign.times_omitted >= 2:

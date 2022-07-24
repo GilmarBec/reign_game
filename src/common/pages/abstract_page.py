@@ -47,5 +47,5 @@ class AbstractPage:
     def _reset_board(self) -> None:
         pass
 
-    def _notify_message(self, message) -> None:
-        showinfo('Mensagem', message)
+    def _notify_message(self, message, title: str = 'Mensagem') -> None:
+        showinfo(title, message)

@@ -1,5 +1,5 @@
 from random import randint
-from tkinter import Button, Frame, Label
+from tkinter import Button, Frame, Label, Event
 from tkinter.messagebox import showinfo
 from .board import Board
 from .board_constants import STATES, CARDS
@@ -12,14 +12,11 @@ class PageBoard(AbstractPage):
     __action_frame: Frame
     __board: Board
 
-    def __init__(self, window):
-        super().__init__(window)
-
     @property
     def page_name(self) -> str:
         return 'BOARD'
 
-    def build(self, data: any = None) -> None:
+    def build(self, data: Board or None = None) -> None:
         if data is not None:
             self.__board = data
 
@@ -65,7 +62,7 @@ class PageBoard(AbstractPage):
             font=("Arial", 20),
         ).pack()
 
-    def __build_revolt_option(self) -> None:
+    def __build_revolt_options(self) -> None:
         Label(self.__action_frame, text='Chance de Rebelião', font=("Arial", 20)).pack()
 
         revolt_chance = self.__board.current_action_selector.revolt_chance
@@ -142,7 +139,7 @@ class PageBoard(AbstractPage):
             message = 'Você decidiu se rebelar, o suserano perdeu o controle sobre você.\n' \
                       'Você agora é um reino livre novamente!'
 
-        showinfo('Decidiu esperar', message)
+        self._notify_message(message, 'Decidiu esperar')
 
         self.build()
 
@@ -156,13 +153,11 @@ class PageBoard(AbstractPage):
         if win:
             message = 'Você decidiu esperar enquanto ganha a confiança do seu suserano.\n'
 
-        showinfo('Decidiu esperar', message + f'Sua chance de revolta agora é {revolt_chance}.')
+        self._notify_message(message + f'Sua chance de revolta agora é {revolt_chance}.', 'Decidiu esperar')
 
         self.build()
 
-    def __roll_dice(self, event) -> None:
-        self.__update_phase_frame(False)
-
+    def __roll_dice(self, event: Event) -> None:
         if self.__state == STATES.ARMY_FAITH:
             [win, die_result] = self.__board.army_faith()
 
@@ -182,9 +177,8 @@ class PageBoard(AbstractPage):
 
         self.build()
 
-    def __update_phase_frame(self, update_state: bool = True) -> None:
-        if update_state:
-            self.__state = self.__board.state
+    def __update_phase_frame(self) -> None:
+        self.__state = self.__board.state
 
         self.__action_frame.destroy()
         self.__action_frame = Frame(self._frame, pady=10, padx=10)
@@ -197,7 +191,7 @@ class PageBoard(AbstractPage):
             self.__build_army_betrayal()
 
         elif self.__state == STATES.REVOLT:
-            self.__build_revolt_option()
+            self.__build_revolt_options()
 
         elif self.__state == STATES.BATTLE:
             self.__build_card_game()

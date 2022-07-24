@@ -13,7 +13,7 @@ class PageRouter:
 
         self.__initial_page()
 
-    def select(self, key: str, data):
+    def select(self, key: str, data: any):
         if self.__current_page is None:
             raise SystemError(f'Current page not defined', {
                 'key': key,

@@ -55,9 +55,7 @@ class Board:
         self.__remaining_rounds -= 1
 
         if is_joker:
-            winner = self.__current_action_selector
-            if winner.overlord:
-                winner = winner.overlord
+            winner = self.__attacker
             self.__vassals += [self.__defender]
         elif self.__remaining_rounds > 0:
             return False

@@ -26,7 +26,7 @@ class Table:
             defender=self.get_reign(defender_reign_id)
         )
 
-    def change_current_player(self) -> None:
+    def __change_current_player(self) -> None:
         ordered_reigns = rotate(self.reigns, self.current_reign.id + 1)
         ordered_reigns = [reign for reign in ordered_reigns if reign.overlord is None]
 
@@ -37,7 +37,7 @@ class Table:
             return False
 
         self.__current_reign.times_omitted += 1
-        self.change_current_player()
+        self.__change_current_player()
         return True
 
     @property
@@ -59,5 +59,5 @@ class Table:
         if len(reign.vassals) == len(self.__reigns) - 1:
             return True
 
-        self.change_current_player()
+        self.__change_current_player()
         return False

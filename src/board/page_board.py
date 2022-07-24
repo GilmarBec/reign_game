@@ -139,7 +139,7 @@ class PageBoard(AbstractPage):
             message = 'Você decidiu se rebelar, o suserano perdeu o controle sobre você.\n' \
                       'Você agora é um reino livre novamente!'
 
-        showinfo('Decidiu esperar', message)
+        self._notify_message(message, 'Decidiu esperar')
 
         self.build()
 
@@ -153,7 +153,7 @@ class PageBoard(AbstractPage):
         if win:
             message = 'Você decidiu esperar enquanto ganha a confiança do seu suserano.\n'
 
-        showinfo('Decidiu esperar', message + f'Sua chance de revolta agora é {revolt_chance}.')
+        self._notify_message(message + f'Sua chance de revolta agora é {revolt_chance}.', 'Decidiu esperar')
 
         self.build()
 
